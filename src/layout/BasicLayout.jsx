@@ -42,14 +42,17 @@ export default (props) => {
     }
   };
 
+
   return (
     <div
       style={{
         height: '100%',
+        width:"100%",
         display: 'flex',
         flexDirection: 'column',
         maxWidth: 1000,
         margin: '0 auto',
+        overflow:"hidden"
       }}
     >
       <TabBar
@@ -69,8 +72,9 @@ export default (props) => {
             history.push('/factory');
           }}
           data-seed="logId"
+          style={{overflow:"hidden"}}
         >
-          <Scrollbars
+          {/* <Scrollbars
             thumbMinSize={10}
             autoHide
             ref={scrollRef}
@@ -78,8 +82,10 @@ export default (props) => {
             hideTracksWhenNotNeeded={true}
             onScroll={handleScroll}
           >
-            {React.cloneElement(children, { scrolltop })}
-          </Scrollbars>
+            { React.cloneElement(children, { scrolltop,scrollRef }) }
+          </Scrollbars> */}
+            {children}
+
         </TabBar.Item>
 
         <TabBar.Item

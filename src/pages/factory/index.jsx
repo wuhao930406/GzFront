@@ -1,32 +1,39 @@
 import React, { useState, useEffect } from 'react';
 
-import { Row, Col, Collapse, Tag } from 'antd';
-import { Carousel, WingBlank, Button, WhiteSpace } from 'antd-mobile';
+import { Row, Col, Collapse, Button, Tag } from 'antd';
+import { Carousel, Tabs, WhiteSpace } from 'antd-mobile';
 import { connect } from 'umi';
 import styles from './index.less';
-import { QrcodeOutlined, DownSquareOutlined } from '@ant-design/icons';
-import { StickyContainer, Sticky } from 'react-sticky';
+import { QrcodeOutlined, DownSquareOutlined, SearchOutlined } from '@ant-design/icons';
+import ResultList from '@/components/ResultList'
+
+
 
 const { Panel } = Collapse;
 const tags = ['不查案底', '工时高', '坐班多', '吃住在厂'];
+const tabs = [
+  { title: '所有企业', key: 't1' },
+  { title: '大龄企业', key: 't2', tags: ["50-55岁", "55-60岁", "60-65岁", "其它"] },
+  { title: '技术企业', key: 't3', tags: ["维修工", "操作工", "技术工", "其它"] },
+  { title: '门店自营', key: 't4', tags: ["超市", "旅馆", "清洁工", "保安"] }
+];
 
-export default ({ scrolltop }) => {
+let Header = ({ scrolltop, scrollRef }) => {
   const [data, setdata] = useState([
     'AiyWuByWklrrUDlFignR',
     'TekJlZRVCjLFexlOCuWn',
     'IJOtIlfsYdTyaDTRVrLI',
-  ]);
-
+  ]), [curtags, setcurtag] = useState({});
   return (
-    <StickyContainer>
+    <div>
       <Row
         className={styles.header}
         style={{ backgroundColor: `rgba(16,142,233,${scrolltop / 200})` }}
       >
         <Col flex="auto">
-          <Button icon="search" className={styles.placebtn}>
+          <Button size='large' icon={<SearchOutlined />} className={styles.placebtn}>
             搜索企业名称或关键字
-          </Button>
+        </Button>
         </Col>
         <Col flex="60px" className="center">
           <QrcodeOutlined style={{ fontSize: 36, color: '#fff' }} />
@@ -63,13 +70,13 @@ export default ({ scrolltop }) => {
         ))}
       </Carousel>
 
-      <section style={{ height: 6000 }}>
+      <section style={{marginBottom:8}}>
         <Collapse
           bordered={false}
           activeKey={['1']}
           expandIcon={({ isActive }) => (
             <DownSquareOutlined
-              style={{ fontSize: 16, color: '#108ee9' }}
+              style={{ fontSize: 16, color: '#f50' }}
               rotate={isActive ? 180 : 0}
             />
           )}
@@ -80,16 +87,42 @@ export default ({ scrolltop }) => {
             key="1"
             extra={<a>更多+</a>}
           >
-            {tags.map((it) => (
-              <a className="tag">{it}</a>
+            {tags.map((it, i) => (
+              <a key={i} className="tag">{it}</a>
             ))}
           </Panel>
         </Collapse>
 
-        <Sticky topOffset={200} relative={true}>
-          {(props) => <div style={props.style}>test</div>}
-        </Sticky>
+        <div style={{ position: scrolltop > 240 ? "fixed" : "initial", top: 64, width: "100%", maxWidth: 1000, zIndex: 999 }}>
+          <Tabs tabs={tabs} onTabClick={(tab) => {
+            setcurtag(tab)
+            scrollRef?.scrollTo(0, 240)
+          }} />
+
+          {
+            curtags.tags && <Row style={{ padding: 8, backgroundColor: "#f9f9f9" }}>
+              <Col flex="auto" className='center'>
+                {curtags.tags.filter((it, i) => i < 4).map((it, i) => (
+                  <a key={i} className="tag" style={{ flex: 1, textAlign: "center" }}>{it}</a>
+                ))}
+              </Col>
+              <Col flex="60px" className='center'>
+                <a>更多+</a>
+              </Col>
+            </Row>
+          }
+        </div>
+        {
+          scrolltop > 240 ? <div style={{ width: "100%", height: curtags.key == "t1" || !curtags.key ? 44 : 88 }}></div> : null
+        }
       </section>
-    </StickyContainer>
-  );
+    </div>
+  )
+}
+
+
+
+export default (props) => {
+
+  return (<ResultList Header={Header}></ResultList>);
 };
