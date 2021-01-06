@@ -22,6 +22,8 @@
   "dependencies": {
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "1.x",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-sticky": "^6.0.3",
     "umi": "^3.3.3"
   },
   "devDependencies": {
