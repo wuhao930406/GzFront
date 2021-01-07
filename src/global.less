@@ -17,12 +17,35 @@
   margin: 0 4px 4px 0;
   white-space: nowrap;
 }
-.am-list-view-scrollview-content{
+.am-list-view-scrollview-content {
   width: 100% !important;
 }
-.am-list-view-scrollview{
+.am-list-view-scrollview {
   height: 100% !important;
 }
-.am-list-header{
+.am-list-header {
   padding: 0 !important;
+}
+.notrans {
+  .am-pull-to-refresh-content {
+    transform: none !important;
+  }
+}
+.oneline {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-view-section-body {
+  padding-bottom: 8px;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 8px;
+    background-color: rgb(245, 245, 249);
+  }
 }

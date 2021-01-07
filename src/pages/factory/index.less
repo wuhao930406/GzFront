@@ -1,7 +1,6 @@
 .header {
   position: fixed;
-  top: 0px;
-  z-index: 9999;
+  z-index: 9999999999;
   width: 100%;
   max-width: 1000px;
   padding: 12px 0;
@@ -26,4 +25,7 @@
     margin: 0;
     margin-right: 12px;
   }
+}
+.am-list-body::before {
+  background-color: transparent !important;
 }

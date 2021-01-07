@@ -42,17 +42,16 @@ export default (props) => {
     }
   };
 
-
   return (
     <div
       style={{
         height: '100%',
-        width:"100%",
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         maxWidth: 1000,
         margin: '0 auto',
-        overflow:"hidden"
+        overflow: 'hidden',
       }}
     >
       <TabBar
@@ -67,12 +66,11 @@ export default (props) => {
           icon={<IconFont type="icon-factory" style={{ fontSize: 22 }} />}
           selectedIcon={rendertopdom('btn')}
           selected={location.pathname === '/factory'}
-          badge={1}
           onPress={() => {
             history.push('/factory');
           }}
           data-seed="logId"
-          style={{overflow:"hidden"}}
+          style={{ overflow: 'hidden' }}
         >
           {/* <Scrollbars
             thumbMinSize={10}
@@ -84,8 +82,7 @@ export default (props) => {
           >
             { React.cloneElement(children, { scrolltop,scrollRef }) }
           </Scrollbars> */}
-            {children}
-
+          {children}
         </TabBar.Item>
 
         <TabBar.Item
@@ -96,7 +93,6 @@ export default (props) => {
             <IconFont type="icon-service" style={{ fontSize: 22 }} />
           }
           selected={location.pathname === '/service'}
-          badge={1}
           onPress={() => {
             history.push('/service');
           }}

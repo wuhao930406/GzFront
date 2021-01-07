@@ -4,26 +4,38 @@ import { Row, Col, Collapse, Button, Tag } from 'antd';
 import { Carousel, Tabs, WhiteSpace } from 'antd-mobile';
 import { connect } from 'umi';
 import styles from './index.less';
-import { QrcodeOutlined, DownSquareOutlined, SearchOutlined } from '@ant-design/icons';
-import ResultList from '@/components/ResultList'
-
-
+import {
+  QrcodeOutlined,
+  DownSquareOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
+import ResultList from '@/components/ResultList';
 
 const { Panel } = Collapse;
 const tags = ['不查案底', '工时高', '坐班多', '吃住在厂'];
 const tabs = [
   { title: '所有企业', key: 't1' },
-  { title: '大龄企业', key: 't2', tags: ["50-55岁", "55-60岁", "60-65岁", "其它"] },
-  { title: '技术企业', key: 't3', tags: ["维修工", "操作工", "技术工", "其它"] },
-  { title: '门店自营', key: 't4', tags: ["超市", "旅馆", "清洁工", "保安"] }
+  {
+    title: '大龄企业',
+    key: 't2',
+    tags: ['50-55岁', '55-60岁', '60-65岁', '其它'],
+  },
+  {
+    title: '技术企业',
+    key: 't3',
+    tags: ['维修工', '操作工', '技术工', '其它'],
+  },
+  { title: '门店自营', key: 't4', tags: ['超市', '旅馆', '清洁工', '保安'] },
 ];
 
-let Header = ({ scrolltop, scrollRef }) => {
+let Header = ({ scrolltop, scrollRef, isrefreshed }) => {
   const [data, setdata] = useState([
-    'AiyWuByWklrrUDlFignR',
-    'TekJlZRVCjLFexlOCuWn',
-    'IJOtIlfsYdTyaDTRVrLI',
-  ]), [curtags, setcurtag] = useState({});
+      'AiyWuByWklrrUDlFignR',
+      'TekJlZRVCjLFexlOCuWn',
+      'IJOtIlfsYdTyaDTRVrLI',
+    ]),
+    [curtags, setcurtag] = useState({});
+  console.log(isrefreshed);
   return (
     <div>
       <Row
@@ -31,9 +43,13 @@ let Header = ({ scrolltop, scrollRef }) => {
         style={{ backgroundColor: `rgba(16,142,233,${scrolltop / 200})` }}
       >
         <Col flex="auto">
-          <Button size='large' icon={<SearchOutlined />} className={styles.placebtn}>
+          <Button
+            size="large"
+            icon={<SearchOutlined />}
+            className={styles.placebtn}
+          >
             搜索企业名称或关键字
-        </Button>
+          </Button>
         </Col>
         <Col flex="60px" className="center">
           <QrcodeOutlined style={{ fontSize: 36, color: '#fff' }} />
@@ -70,7 +86,7 @@ let Header = ({ scrolltop, scrollRef }) => {
         ))}
       </Carousel>
 
-      <section style={{marginBottom:8}}>
+      <section style={{ marginBottom: 8 }}>
         <Collapse
           bordered={false}
           activeKey={['1']}
@@ -88,41 +104,64 @@ let Header = ({ scrolltop, scrollRef }) => {
             extra={<a>更多+</a>}
           >
             {tags.map((it, i) => (
-              <a key={i} className="tag">{it}</a>
+              <a key={i} className="tag">
+                {it}
+              </a>
             ))}
           </Panel>
         </Collapse>
 
-        <div style={{ position: scrolltop > 240 ? "fixed" : "initial", top: 64, width: "100%", maxWidth: 1000, zIndex: 999 }}>
-          <Tabs tabs={tabs} onTabClick={(tab) => {
-            setcurtag(tab)
-            scrollRef?.scrollTo(0, 240)
-          }} />
+        <div
+          style={{
+            position: scrolltop > 240 ? 'fixed' : 'initial',
+            top: 64,
+            width: '100%',
+            maxWidth: 1000,
+            zIndex: 999,
+          }}
+        >
+          <Tabs
+            tabs={tabs}
+            onTabClick={(tab) => {
+              setcurtag(tab);
+              scrollRef?.scrollTo(0, 245);
+            }}
+          />
 
-          {
-            curtags.tags && <Row style={{ padding: 8, backgroundColor: "#f9f9f9" }}>
-              <Col flex="auto" className='center'>
-                {curtags.tags.filter((it, i) => i < 4).map((it, i) => (
-                  <a key={i} className="tag" style={{ flex: 1, textAlign: "center" }}>{it}</a>
-                ))}
+          {curtags.tags && (
+            <Row style={{ padding: 8, backgroundColor: '#f9f9f9' }}>
+              <Col flex="auto" className="center">
+                {curtags.tags
+                  .filter((it, i) => i < 4)
+                  .map((it, i) => (
+                    <a
+                      key={i}
+                      className="tag"
+                      style={{ flex: 1, textAlign: 'center' }}
+                    >
+                      {it}
+                    </a>
+                  ))}
               </Col>
-              <Col flex="60px" className='center'>
+              <Col flex="60px" className="center">
                 <a>更多+</a>
               </Col>
             </Row>
-          }
+          )}
         </div>
-        {
-          scrolltop > 240 ? <div style={{ width: "100%", height: curtags.key == "t1" || !curtags.key ? 44 : 88 }}></div> : null
-        }
+        {scrolltop > 240 ? (
+          <div
+            style={{
+              width: '100%',
+              height: curtags.key == 't1' || !curtags.key ? 44 : 88,
+            }}
+          ></div>
+        ) : null}
       </section>
     </div>
-  )
-}
-
-
+  );
+};
 
 export default (props) => {
-
-  return (<ResultList Header={Header}></ResultList>);
+  return <ResultList Header={Header}></ResultList>;
 };
