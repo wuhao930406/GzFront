@@ -44,4 +44,7 @@ export default defineConfig({
   headScripts: [
     `https://as.alipayobjects.com/g/component/fastclick/1.0.6/fastclick.js`,
   ],
+
+  plugins:['@alitajs/keep-alive'],
+  keepalive:['/factory','/service']
 });

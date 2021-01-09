@@ -13,11 +13,11 @@ export default [
       },
       {
         path: '/service',
-        component: '@/pages/indexs',
+        component: '@/pages/service',
       },
       {
         path: '/center',
-        component: '@/pages/indexs',
+        component: '@/pages/center',
       },
     ],
   },

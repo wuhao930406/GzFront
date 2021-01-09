@@ -48,7 +48,7 @@ function genData(pIndex = 0) {
   rowIDs = [...rowIDs];
 }
 
-class ResultList extends React.Component {
+class PublicList extends React.Component {
   constructor(props) {
     super(props);
     const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID];
@@ -118,13 +118,6 @@ class ResultList extends React.Component {
 
 
   
-  componentWillReceiveProps(np) {
-    if (this.props.global.istop !== np.global.istop) {
-      if (np.global.istop === "0") {
-        scrollAnimation(this.state.scrolltop,0,this.lv)
-      }
-    }
-  }
 
   render() {
     const separator = (sectionID, rowID) => (
@@ -203,7 +196,7 @@ class ResultList extends React.Component {
         </div>
       );
     };
-    let { Header, global: { istop }, dispatch } = this.props,
+    let { Header } = this.props,
       {
         scrolltop,
         dataSource,
@@ -215,12 +208,12 @@ class ResultList extends React.Component {
       <ListView
         ref={(el) => (this.lv = el)}
         dataSource={dataSource}
-        renderHeader={() => (
+        renderHeader={() => Header?(
           <Header
             scrolltop={scrolltop}
             scrollRef={this.lv}
           />
-        )}
+        ):null}
         renderFooter={() => (
           <div style={{ padding: 30, textAlign: 'center' }}>
             {isLoading ? 'Loading...' : 'Loaded'}
@@ -230,6 +223,7 @@ class ResultList extends React.Component {
         renderSeparator={separator}
         style={{
           overflow: 'auto',
+          height:"100%"
         }}
         className={scrolltop > 0 ? 'notrans' : 'trans'}
         pageSize={4}
@@ -237,25 +231,6 @@ class ResultList extends React.Component {
           this.setState({
             scrolltop: e.target.scrollTop,
           });
-          if (e.target.scrollTop > 400) {
-            if (istop === true) {
-
-            } else {
-              dispatch({
-                type: 'global/istop',
-                payload: true,
-              });
-            }
-          } else {
-            if (istop === false) {
-
-            } else {
-              dispatch({
-                type: 'global/istop',
-                payload: false,
-              });
-            }
-          }
         }}
         scrollRenderAheadDistance={800}
         distanceToRefresh={window.devicePixelRatio * 25}
@@ -269,7 +244,4 @@ class ResultList extends React.Component {
   }
 }
 
-export default connect(({ global, loading }) => ({
-  global,
-  loading,
-}))(ResultList)
+export default PublicList

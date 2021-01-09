@@ -20,6 +20,7 @@
     ]
   },
   "dependencies": {
+    "@alitajs/keep-alive": "^2.6.16",
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "1.x",
     "react-custom-scrollbars": "^4.2.1",

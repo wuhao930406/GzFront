@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { Row, Col, Collapse, Button, Tag } from 'antd';
 import { Carousel, Tabs, WhiteSpace } from 'antd-mobile';
 import { connect } from 'umi';
@@ -10,6 +9,9 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import ResultList from '@/components/ResultList';
+import scrollAnimation from '@/utils/scrollAnimation'
+
+
 
 const { Panel } = Collapse;
 const tags = ['不查案底', '工时高', '坐班多', '吃住在厂'];
@@ -28,14 +30,13 @@ const tabs = [
   { title: '门店自营', key: 't4', tags: ['超市', '旅馆', '清洁工', '保安'] },
 ];
 
-let Header = ({ scrolltop, scrollRef, isrefreshed }) => {
+let Header = ({ scrolltop, scrollRef }) => {
   const [data, setdata] = useState([
-      'AiyWuByWklrrUDlFignR',
-      'TekJlZRVCjLFexlOCuWn',
-      'IJOtIlfsYdTyaDTRVrLI',
-    ]),
+    'AiyWuByWklrrUDlFignR',
+    'TekJlZRVCjLFexlOCuWn',
+    'IJOtIlfsYdTyaDTRVrLI',
+  ]),
     [curtags, setcurtag] = useState({});
-  console.log(isrefreshed);
   return (
     <div>
       <Row
@@ -124,7 +125,7 @@ let Header = ({ scrolltop, scrollRef, isrefreshed }) => {
             tabs={tabs}
             onTabClick={(tab) => {
               setcurtag(tab);
-              scrollRef?.scrollTo(0, 245);
+              scrollAnimation(scrolltop, 245, scrollRef)
             }}
           />
 

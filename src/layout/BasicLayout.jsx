@@ -1,48 +1,57 @@
 import { TabBar } from 'antd-mobile';
 import { history } from 'umi';
-import React, { useState, useEffect, useRef } from 'react';
-import { createFromIconfontCN } from '@ant-design/icons';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import IconFont from '@/components/IconFont';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { KeepAliveLayout, connect } from 'umi';
 
-const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_2310877_p7uwpp11v1.js',
-});
 
-export default (props) => {
-  let { children, route, location } = props,
+let Rendertopdom = ({ type, istop }) => {
+  let iftop = useMemo(() => {
+    return istop
+  }, [istop]);
+
+
+  if (iftop) {
+    if (type == 'btn') {
+      return <IconFont type="icon-top" style={{ fontSize: 22 }} />;
+    } else {
+      return '返回顶部';
+    }
+  } else {
+    if (type == 'btn') {
+      return <IconFont type="icon-factory" style={{ fontSize: 22 }} />;
+    } else {
+      return '找工作';
+    }
+  }
+};
+
+
+
+
+let BasicLayout = (props) => {
+  let { children, route, location, dispatch, global: { istop } } = props,
     scrollRef = useRef(),
     scrollRefs = useRef(),
     scrollRefc = useRef();
 
   let [scrolltop, setscroll] = useState(0);
 
-  useEffect(() => {
-    scrollRef?.current?.scrollToTop();
-    scrollRefs?.current?.scrollToTop();
-    scrollRefc?.current?.scrollToTop();
-  }, [location]);
+  // useEffect(() => {
+  //   scrollRef?.current?.scrollToTop();
+  //   scrollRefs?.current?.scrollToTop();
+  //   scrollRefc?.current?.scrollToTop();
+  // }, [location]);
 
-  let handleScroll = (e) => {
-    setscroll(e.target.scrollTop);
-  };
+  // let handleScroll = (e) => {
+  //   setscroll(e.target.istop);
+  // };
 
-  let rendertopdom = (type) => {
-    if (scrolltop > 400) {
-      if (type == 'btn') {
-        return <IconFont type="icon-top" style={{ fontSize: 22 }} />;
-      } else {
-        return '返回顶部';
-      }
-    } else {
-      if (type == 'btn') {
-        return <IconFont type="icon-factory" style={{ fontSize: 22 }} />;
-      } else {
-        return '找工作';
-      }
-    }
-  };
+
 
   return (
+
     <div
       style={{
         height: '100%',
@@ -61,13 +70,20 @@ export default (props) => {
         prerenderingSiblingsNumber={0}
       >
         <TabBar.Item
-          title={rendertopdom()}
+          title={<Rendertopdom istop={istop}></Rendertopdom>}
           key="factory"
           icon={<IconFont type="icon-factory" style={{ fontSize: 22 }} />}
-          selectedIcon={rendertopdom('btn')}
+          selectedIcon={<Rendertopdom type='btn' istop={istop}></Rendertopdom>}
           selected={location.pathname === '/factory'}
           onPress={() => {
+            if (istop && location.pathname === '/factory') {
+              dispatch({
+                type: 'global/istop',
+                payload: "0",
+              });
+            }
             history.push('/factory');
+
           }}
           data-seed="logId"
           style={{ overflow: 'hidden' }}
@@ -82,7 +98,7 @@ export default (props) => {
           >
             { React.cloneElement(children, { scrolltop,scrollRef }) }
           </Scrollbars> */}
-          {children}
+          <KeepAliveLayout {...props}>{children}</KeepAliveLayout>
         </TabBar.Item>
 
         <TabBar.Item
@@ -97,15 +113,7 @@ export default (props) => {
             history.push('/service');
           }}
         >
-          <Scrollbars
-            thumbMinSize={10}
-            autoHide
-            ref={scrollRefs}
-            style={{ width: '100%', height: '100%' }}
-            hideTracksWhenNotNeeded={true}
-          >
-            {children}
-          </Scrollbars>
+          <KeepAliveLayout {...props}>{children}</KeepAliveLayout>
         </TabBar.Item>
 
         <TabBar.Item
@@ -135,3 +143,8 @@ export default (props) => {
     </div>
   );
 };
+
+export default BasicLayout = connect(({ global, loading }) => ({
+  global,
+  loading,
+}))(BasicLayout)
