@@ -114,11 +114,12 @@ let Header = ({ scrolltop, scrollRef }) => {
 
         <div
           style={{
-            position: scrolltop > 240 ? 'fixed' : 'initial',
+            position: scrolltop > 245 ? 'fixed' : 'initial',
             top: 64,
             width: '100%',
             maxWidth: 1000,
             zIndex: 999,
+            transition:"all 0.4s"
           }}
         >
           <Tabs
@@ -150,14 +151,6 @@ let Header = ({ scrolltop, scrollRef }) => {
             </Row>
           )}
         </div>
-        {scrolltop > 240 ? (
-          <div
-            style={{
-              width: '100%',
-              height: curtags.key == 't1' || !curtags.key ? 44 : 88,
-            }}
-          ></div>
-        ) : null}
       </section>
     </div>
   );

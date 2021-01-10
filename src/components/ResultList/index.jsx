@@ -81,7 +81,7 @@ class ResultList extends React.Component {
         isLoading: false,
         refreshing: false,
       });
-    }, 600);
+    }, 200);
   }
 
   onRefresh = () => {
@@ -94,7 +94,7 @@ class ResultList extends React.Component {
         refreshing: false,
         isLoading: false,
       });
-    }, 600);
+    }, 200);
   };
 
   onEndReached = (event) => {
