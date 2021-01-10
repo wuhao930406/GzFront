@@ -12,6 +12,10 @@ export default [
         component: '@/pages/factory',
       },
       {
+        path: '/search',
+        component: '@/pages/factory/Search',
+      },
+      {
         path: '/service',
         component: '@/pages/service',
       },

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import IconFont from '@/components/IconFont';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { KeepAliveLayout, connect } from 'umi';
-
+import getUserinfo from '@/utils/getUserinfo'
 
 let Rendertopdom = ({ type, istop }) => {
   let iftop = useMemo(() => {
@@ -38,6 +38,21 @@ let BasicLayout = (props) => {
 
   let [scrolltop, setscroll] = useState(0);
 
+  useEffect(()=>{
+    getUserinfo(props);
+
+    dispatch({
+      type: 'global/keyword',
+      payload: {is_all:1},
+    });
+    dispatch({
+      type: 'global/classify',
+      payload: {is_all:1},
+    });
+
+
+  },[])
+
   // useEffect(() => {
   //   scrollRef?.current?.scrollToTop();
   //   scrollRefs?.current?.scrollToTop();
@@ -47,8 +62,7 @@ let BasicLayout = (props) => {
   // let handleScroll = (e) => {
   //   setscroll(e.target.istop);
   // };
-
-
+  
 
   return (
 
@@ -68,6 +82,7 @@ let BasicLayout = (props) => {
         tintColor="#108ee9"
         barTintColor="white"
         prerenderingSiblingsNumber={0}
+        hidden={['/factory','/service','/center'].indexOf(location.pathname)==-1}
       >
         <TabBar.Item
           title={<Rendertopdom istop={istop}></Rendertopdom>}

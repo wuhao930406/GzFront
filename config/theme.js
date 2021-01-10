@@ -26,10 +26,10 @@ export default {
   '@font-size-heading': '17px',
 
   //圆角弧度
-  '@radius-xs': '0px',
-  '@radius-sm': '0px',
-  '@radius-md': '0px',
-  '@radius-lg': '0px',
+  '@radius-xs': '4px',
+  '@radius-sm': '4px',
+  '@radius-md': '4px',
+  '@radius-lg': '4px',
   '@radius-circle': '50%'
 
 }

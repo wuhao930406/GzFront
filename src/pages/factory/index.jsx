@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Collapse, Button, Tag } from 'antd';
-import { Carousel, Tabs, WhiteSpace } from 'antd-mobile';
-import { connect } from 'umi';
+import { Carousel, Tabs, WhiteSpace, Modal } from 'antd-mobile';
+import { connect, history } from 'umi';
 import styles from './index.less';
 import {
   QrcodeOutlined,
@@ -10,35 +10,50 @@ import {
 } from '@ant-design/icons';
 import ResultList from '@/components/ResultList';
 import scrollAnimation from '@/utils/scrollAnimation'
-
+import IconFont from '@/components/IconFont'
 
 
 const { Panel } = Collapse;
-const tags = ['不查案底', '工时高', '坐班多', '吃住在厂'];
-const tabs = [
-  { title: '所有企业', key: 't1' },
-  {
-    title: '大龄企业',
-    key: 't2',
-    tags: ['50-55岁', '55-60岁', '60-65岁', '其它'],
-  },
-  {
-    title: '技术企业',
-    key: 't3',
-    tags: ['维修工', '操作工', '技术工', '其它'],
-  },
-  { title: '门店自营', key: 't4', tags: ['超市', '旅馆', '清洁工', '保安'] },
-];
 
-let Header = ({ scrolltop, scrollRef }) => {
+let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
   const [data, setdata] = useState([
     'AiyWuByWklrrUDlFignR',
     'TekJlZRVCjLFexlOCuWn',
     'IJOtIlfsYdTyaDTRVrLI',
   ]),
-    [curtags, setcurtag] = useState({});
+    [curtags, setcurtag] = useState({}),
+    [iftype, ciftype] = useState({
+      title: "",
+      visible: false,
+      curlist: []
+    })
+
+
   return (
     <div>
+      <Modal
+        visible={iftype.visible}
+        width="95%"
+        transparent
+        maskClosable={true}
+        onClose={() => {
+          ciftype({
+            ...iftype,
+            visible: false
+          })
+        }}
+        title={iftype.title}
+        footer={false}
+        style={{ width: '95%', borderRadius: 12, overflow: "hidden", }}
+      >
+        <div>
+          {
+            iftype.curlist.map((it, i) => <a className="oneline" style={{ textAlign: "center" }} key={i} className="tag">
+              {it.name}
+            </a>)
+          }
+        </div>
+      </Modal>
       <Row
         className={styles.header}
         style={{ backgroundColor: `rgba(16,142,233,${scrolltop / 200})` }}
@@ -48,6 +63,9 @@ let Header = ({ scrolltop, scrollRef }) => {
             size="large"
             icon={<SearchOutlined />}
             className={styles.placebtn}
+            onClick={() => {
+              history.push("/search")
+            }}
           >
             搜索企业名称或关键字
           </Button>
@@ -92,9 +110,9 @@ let Header = ({ scrolltop, scrollRef }) => {
           bordered={false}
           activeKey={['1']}
           expandIcon={({ isActive }) => (
-            <DownSquareOutlined
+            <IconFont
+              type='icon-hot'
               style={{ fontSize: 16, color: '#f50' }}
-              rotate={isActive ? 180 : 0}
             />
           )}
           className="site-collapse-custom-collapse"
@@ -102,13 +120,23 @@ let Header = ({ scrolltop, scrollRef }) => {
           <Panel
             header={<span style={{ fontSize: 16 }}>热门标签</span>}
             key="1"
-            extra={<a>更多+</a>}
+            extra={<a style={{ color: '#f50', display: keyword.length < 5 ? "none" : "block" }} onClick={() => {
+              ciftype({
+                ...iftype,
+                title: "热门标签",
+                visible: true,
+                curlist: keyword,
+                type:"keyword"
+              })
+            }}>更多+</a>}
           >
-            {tags.map((it, i) => (
-              <a key={i} className="tag">
-                {it}
-              </a>
-            ))}
+            <div style={{ display: "flex" }}>
+              {keyword.filter((it, i) => i < 4).map((it, i) => (
+                <a className="oneline" style={{ width: "25%", textAlign: "center" }} key={i} className="tag">
+                  {it.name}
+                </a>
+              ))}
+            </div>
           </Panel>
         </Collapse>
 
@@ -119,35 +147,55 @@ let Header = ({ scrolltop, scrollRef }) => {
             width: '100%',
             maxWidth: 1000,
             zIndex: 999,
-            transition:"all 0.4s"
+            transition: "all 0.4s"
           }}
         >
           <Tabs
-            tabs={tabs}
+            tabs={
+              [
+                { title: '所有企业', key: "-1" },
+                ...classify.map(it => ({
+                  ...it,
+                  title: it.name,
+                  key: it.id,
+                }))
+              ]
+            }
             onTabClick={(tab) => {
               setcurtag(tab);
-              scrollAnimation(scrolltop, 245, scrollRef)
+              scrollRef && scrollAnimation(scrolltop, 245, scrollRef)
             }}
           />
 
-          {curtags.tags && (
+          {curtags.min_classifies && (
             <Row style={{ padding: 8, backgroundColor: '#f9f9f9' }}>
-              <Col flex="auto" className="center">
-                {curtags.tags
+              <Col flex="auto" className="center" style={{ justifyContent: "flex-start" }}>
+                {curtags.min_classifies
                   .filter((it, i) => i < 4)
                   .map((it, i) => (
                     <a
                       key={i}
                       className="tag"
-                      style={{ flex: 1, textAlign: 'center' }}
+                      style={{ width: "25%", textAlign: 'center', marginBottom: 0 }}
                     >
-                      {it}
+                      {it.name}
                     </a>
                   ))}
               </Col>
-              <Col flex="60px" className="center">
-                <a>更多+</a>
-              </Col>
+              {
+                curtags.min_classifies.length > 4 && <Col flex="60px" className="center" onClick={()=>{
+                  ciftype({
+                    ...iftype,
+                    visible:true,
+                    title:curtags.title,
+                    curlist:curtags.min_classifies,
+                    type:"classify"
+                  })
+                }}>
+                  <a>更多+</a>
+                </Col>
+              }
+
             </Row>
           )}
         </div>
@@ -155,6 +203,12 @@ let Header = ({ scrolltop, scrollRef }) => {
     </div>
   );
 };
+
+Header = connect(({ global, loading }) => ({
+  global,
+  loading,
+}))(Header)
+
 
 export default (props) => {
   return <ResultList Header={Header}></ResultList>;

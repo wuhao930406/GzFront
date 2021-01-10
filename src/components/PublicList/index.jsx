@@ -3,6 +3,7 @@ import { PullToRefresh, ListView } from 'antd-mobile';
 import ReactDOM from 'react-dom';
 import { connect } from 'umi';
 import scrollAnimation from '@/utils/scrollAnimation'
+import LoadingFooter from "../LoadingFooter"
 
 
 const data = [
@@ -215,9 +216,7 @@ class PublicList extends React.Component {
           />
         ):null}
         renderFooter={() => (
-          <div style={{ padding: 30, textAlign: 'center' }}>
-            {isLoading ? 'Loading...' : 'Loaded'}
-          </div>
+          <LoadingFooter isLoading={isLoading}></LoadingFooter> 
         )}
         renderRow={row}
         renderSeparator={separator}
