@@ -53,11 +53,18 @@ let BasicLayout = (props) => {
 
   },[])
 
-  // useEffect(() => {
+  useEffect(() => {
+    dispatch({
+      type: 'global/postData',
+      payload: {
+        name: "",
+        min_classify_id: "",
+        max_classify_id: "",
+        pageIndex: 1
+      },
+    });
+  }, [location.pathname]);
   //   scrollRef?.current?.scrollToTop();
-  //   scrollRefs?.current?.scrollToTop();
-  //   scrollRefc?.current?.scrollToTop();
-  // }, [location]);
 
   // let handleScroll = (e) => {
   //   setscroll(e.target.istop);

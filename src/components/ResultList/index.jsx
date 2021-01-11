@@ -38,17 +38,20 @@ class ResultList extends React.Component {
       isLoading: true,
       scrolltop: 0,
       refreshing: false,
+      dataArr: []
     };
   }
 
   //获取一段分页数据
   getsectiondata(params) {
     job(params).then((res) => {
+      let dataArr = this.state.dataArr.concat(res.data.list);
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(res.data.list),
+        dataSource: this.state.dataSource.cloneWithRows(dataArr),
         isLoading: false,
         refreshing: false,
         hasMore: res.data.hasnextpage,
+        dataArr
       });
     });
   }
@@ -58,30 +61,39 @@ class ResultList extends React.Component {
   }
 
   onRefresh = () => {
-    this.setState({ refreshing: true, isLoading: true });
-    // simulate initial Ajax
-    setTimeout(() => {
-      this.setState({
-        dataSource: this.state.dataSource,
-        refreshing: false,
-        isLoading: false,
-      });
-    }, 200);
+    let { global: { postData }, dispatch } = this.props;
+    this.setState({
+      refreshing: true,
+      isLoading: true,
+      hasMore:true,
+      dataArr: []
+    }, () => {
+      dispatch({
+        type: 'global/postData',
+        payload: {
+          pageIndex: 1,
+        },
+      }).then((res) => {
+        this.getsectiondata(res)
+      })
+    })
   };
 
   onEndReached = (event) => {
-    // load new data
-    // hasMore: from backend data, indicates whether it is the last page, here is false
-    if (this.state.isLoading && !this.state.hasMore) {
+    let { global: { postData }, dispatch } = this.props
+    if (this.state.isLoading || !this.state.hasMore) {
       return;
     }
+    alert(postData.pageIndex++)
     this.setState({ isLoading: true });
-    setTimeout(() => {
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(dataBlobs, rowIDs),
-        isLoading: false,
-      });
-    }, 1000);
+    dispatch({
+      type: 'global/postData',
+      payload: {
+        pageIndex: postData.pageIndex++,
+      },
+    }).then((res) => {
+      this.getsectiondata(res)
+    })
   };
 
   componentWillReceiveProps(np) {
@@ -89,6 +101,19 @@ class ResultList extends React.Component {
       if (np.global.istop === '0') {
         scrollAnimation(this.state.scrolltop, 0, this.lv);
       }
+    }
+    let prev = {...this.props.global.postData},next = {...np.global.postData};
+    delete prev.pageIndex;
+    delete next.pageIndex;
+    if (JSON.stringify(prev) !== JSON.stringify(next)){
+        this.setState({
+          refreshing: true,
+          isLoading: true,
+          hasMore:true,
+          dataArr: []
+        }, () => {
+          this.getsectiondata(np.global.postData)
+        })
     }
   }
 
@@ -102,14 +127,10 @@ class ResultList extends React.Component {
         }}
       />
     );
-    let index = data.length - 1;
-    const row = (rowData, sectionID, rowID) => {
-      if (index < 0) {
-        index = data.length - 1;
-      }
-      const obj = data[index--];
+    const row = (rowData) => {
+      let poster = rowData.factory.factory_image.map(it => it.preview_url)
       return (
-        <div key={rowID} style={{ padding: '0 12px' }}>
+        <div key={rowData.id} style={{ padding: '0 12px' }}>
           <div
             style={{
               display: '-webkit-box',
@@ -122,7 +143,7 @@ class ResultList extends React.Component {
                 height: 64,
                 width: 64,
                 marginRight: '12px',
-                background: `url(${obj.img}) no-repeat center`,
+                background: `url(${poster ? poster[0] : ""}) no-repeat center`,
                 backgroundSize: 'cover',
               }}
             ></div>
@@ -137,14 +158,14 @@ class ResultList extends React.Component {
               }}
             >
               <div className="oneline" style={{ color: '#000', fontSize: 16 }}>
-                {obj.des}
+                {rowData.name}
               </div>
-              <div>{obj.tags.join(' / ')}</div>
+              <div>{/*rowData.tags.join(' / ') */}</div>
               <div>
                 <span
                   style={{ color: '#f50', fontSize: 15, fontWeight: 'bolder' }}
                 >
-                  5600-7100
+                  {rowData.min_month_salary + " - " + rowData.max_month_salary}
                 </span>{' '}
                 元/月
               </div>
@@ -161,7 +182,7 @@ class ResultList extends React.Component {
               }}
             >
               <span style={{ color: '#f50', fontSize: 20, marginBottom: -4 }}>
-                25.5
+                {rowData.hour_salary}
               </span>
               <span style={{ marginBottom: 4 }}>元/小时</span>
             </div>
@@ -170,12 +191,11 @@ class ResultList extends React.Component {
       );
     };
     let {
-        Header,
-        global: { istop },
-        dispatch,
-      } = this.props,
-      { scrolltop, dataSource, isLoading, refreshing } = this.state;
-
+      Header,
+      global: { istop },
+      dispatch,
+    } = this.props,
+      { scrolltop, dataSource, isLoading, refreshing, hasMore } = this.state;
     return (
       <ListView
         ref={(el) => (this.lv = el)}
@@ -184,7 +204,7 @@ class ResultList extends React.Component {
           <Header scrolltop={scrolltop} scrollRef={this.lv} />
         )}
         renderFooter={() => (
-          <LoadingFooter isLoading={isLoading}></LoadingFooter>
+          <LoadingFooter isLoading={isLoading && hasMore}></LoadingFooter>
         )}
         renderRow={row}
         renderSeparator={separator}
@@ -192,7 +212,7 @@ class ResultList extends React.Component {
           overflow: 'auto',
         }}
         className={scrolltop > 0 ? 'notrans' : 'trans'}
-        pageSize={4}
+        pageSize={10}
         onScroll={(e) => {
           this.setState({
             scrolltop: e.target.scrollTop,

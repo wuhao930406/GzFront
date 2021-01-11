@@ -18,8 +18,7 @@ let Search = ({ global: { keyword }, dispatch }) => {
   let searchref = useRef(),
     [searchistory, changehis] = useState(
       localStorage.getItem('SH') ? JSON.parse(localStorage.getItem('SH')) : [],
-    ),
-    [postData, changepostdata] = useState({ name: '' });
+    ), [postData, changepostdata] = useState({ name: '' });
 
   useEffect(() => {
     searchref?.current?.focus();
@@ -30,7 +29,7 @@ let Search = ({ global: { keyword }, dispatch }) => {
       type: 'global/postData',
       payload: {
         name: value,
-        pageIndex: 'reload',
+        pageIndex: 1,
       },
     });
   }

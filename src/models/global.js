@@ -23,19 +23,19 @@ const GlobalModel = {
     *postData({ payload }, { call, put, select }) {
       //paload 传入修改值即可
       const lastpostData = yield select((state) => state.global.postData);
-      console.log({
+      console.log(payload)
+
+      let newpost = {
         ...lastpostData,
         ...payload
-      })
+      }
       yield put({
         type: 'save',
         payload: {
-          postData: {
-            ...lastpostData,
-            ...payload
-          }
+          postData: newpost
         },
       });
+      return newpost
     },
     *keyword({ payload }, { call, put, select }) {
       let response = yield call(keyword, payload);
