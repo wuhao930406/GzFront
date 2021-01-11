@@ -2,9 +2,9 @@
 import { PullToRefresh, ListView } from 'antd-mobile';
 import ReactDOM from 'react-dom';
 import { connect } from 'umi';
-import scrollAnimation from '@/utils/scrollAnimation'
-import LoadingFooter from "../LoadingFooter"
-
+import scrollAnimation from '@/utils/scrollAnimation';
+import LoadingFooter from '../LoadingFooter';
+import { job } from '@/services/factory';
 
 const data = [
   {
@@ -26,42 +26,13 @@ const data = [
     tags: ['维修工', '50-55岁', '时薪高'],
   },
 ];
-const NUM_SECTIONS = 5;
-const NUM_ROWS_PER_SECTION = 5;
-let pageIndex = 0;
-
-const dataBlobs = {};
-let rowIDs = [];
-
-function genData(pIndex = 0) {
-  for (let i = 0; i < NUM_SECTIONS; i++) {
-    const ii = pIndex * NUM_SECTIONS + i;
-    const sectionName = `Section ${ii}`;
-    dataBlobs[sectionName] = sectionName;
-    rowIDs[ii] = [];
-
-    for (let jj = 0; jj < NUM_ROWS_PER_SECTION; jj++) {
-      const rowName = `S${ii}, R${jj}`;
-      rowIDs[ii].push(rowName);
-      dataBlobs[rowName] = rowName;
-    }
-  }
-  rowIDs = [...rowIDs];
-}
 
 class ResultList extends React.Component {
   constructor(props) {
     super(props);
-    const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID];
-    const getRowData = (dataBlob, sectionID, rowID) => dataBlob[rowID];
-
     const dataSource = new ListView.DataSource({
-      getRowData,
-      getSectionHeaderData: getSectionData,
       rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     });
-
     this.state = {
       dataSource,
       isLoading: true,
@@ -70,26 +41,26 @@ class ResultList extends React.Component {
     };
   }
 
-  componentDidMount() {
-    // simulate initial Ajax
-    setTimeout(() => {
-      genData();
+  //获取一段分页数据
+  getsectiondata(params) {
+    job(params).then((res) => {
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(
-          dataBlobs,
-          rowIDs,
-        ),
+        dataSource: this.state.dataSource.cloneWithRows(res.data.list),
         isLoading: false,
         refreshing: false,
+        hasMore: res.data.hasnextpage,
       });
-    }, 200);
+    });
+  }
+
+  componentDidMount() {
+    this.getsectiondata(this.props.global.postData);
   }
 
   onRefresh = () => {
     this.setState({ refreshing: true, isLoading: true });
     // simulate initial Ajax
     setTimeout(() => {
-      this.rData = genData();
       this.setState({
         dataSource: this.state.dataSource,
         refreshing: false,
@@ -106,23 +77,17 @@ class ResultList extends React.Component {
     }
     this.setState({ isLoading: true });
     setTimeout(() => {
-      genData(++pageIndex);
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(
-          dataBlobs,
-          rowIDs,
-        ),
+        dataSource: this.state.dataSource.cloneWithRows(dataBlobs, rowIDs),
         isLoading: false,
       });
     }, 1000);
   };
 
-
-  
   componentWillReceiveProps(np) {
     if (this.props.global.istop !== np.global.istop) {
-      if (np.global.istop === "0") {
-        scrollAnimation(this.state.scrolltop,0,this.lv)
+      if (np.global.istop === '0') {
+        scrollAnimation(this.state.scrolltop, 0, this.lv);
       }
     }
   }
@@ -204,26 +169,22 @@ class ResultList extends React.Component {
         </div>
       );
     };
-    let { Header, global: { istop }, dispatch } = this.props,
-      {
-        scrolltop,
-        dataSource,
-        isLoading,
-        refreshing,
-      } = this.state;
+    let {
+        Header,
+        global: { istop },
+        dispatch,
+      } = this.props,
+      { scrolltop, dataSource, isLoading, refreshing } = this.state;
 
     return (
       <ListView
         ref={(el) => (this.lv = el)}
         dataSource={dataSource}
         renderHeader={() => (
-          <Header
-            scrolltop={scrolltop}
-            scrollRef={this.lv}
-          />
+          <Header scrolltop={scrolltop} scrollRef={this.lv} />
         )}
         renderFooter={() => (
-          <LoadingFooter isLoading={isLoading}></LoadingFooter> 
+          <LoadingFooter isLoading={isLoading}></LoadingFooter>
         )}
         renderRow={row}
         renderSeparator={separator}
@@ -238,7 +199,6 @@ class ResultList extends React.Component {
           });
           if (e.target.scrollTop > 400) {
             if (istop === true) {
-
             } else {
               dispatch({
                 type: 'global/istop',
@@ -247,7 +207,6 @@ class ResultList extends React.Component {
             }
           } else {
             if (istop === false) {
-
             } else {
               dispatch({
                 type: 'global/istop',
@@ -271,4 +230,4 @@ class ResultList extends React.Component {
 export default connect(({ global, loading }) => ({
   global,
   loading,
-}))(ResultList)
+}))(ResultList);
