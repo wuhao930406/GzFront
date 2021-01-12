@@ -28,12 +28,12 @@ let Rendertopdom = ({ type, istop }) => {
 
 let BasicLayout = (props) => {
   let {
-      children,
-      route,
-      location,
-      dispatch,
-      global: { istop },
-    } = props,
+    children,
+    route,
+    location,
+    dispatch,
+    global: { istop },
+  } = props,
     scrollRef = useRef(),
     scrollRefs = useRef(),
     scrollRefc = useRef();
@@ -76,6 +76,7 @@ let BasicLayout = (props) => {
         flexDirection: 'column',
         maxWidth: 1000,
         margin: '0 auto',
+        overflow: "hidden"
       }}
     >
       <TabBar
@@ -104,17 +105,17 @@ let BasicLayout = (props) => {
           }}
           data-seed="logId"
         >
-          {/* <Scrollbars
-            thumbMinSize={10}
-            autoHide
-            ref={scrollRef}
-            style={{ width: '100%', height: '100%' }}
-            hideTracksWhenNotNeeded={true}
-            onScroll={handleScroll}
-          >
-            { React.cloneElement(children, { scrolltop,scrollRef }) }
-          </Scrollbars> */}
-          <KeepAliveLayout {...props}>{children}</KeepAliveLayout>
+          <KeepAliveLayout {...props}>
+            <Scrollbars
+              thumbMinSize={10}
+              autoHide
+              ref={scrollRef}
+              style={{ width: '100%', height: '100%' }}
+              hideTracksWhenNotNeeded={true}
+            >
+              {children}
+            </Scrollbars>
+          </KeepAliveLayout>
         </TabBar.Item>
 
         <TabBar.Item

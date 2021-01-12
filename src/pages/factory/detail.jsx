@@ -183,9 +183,10 @@ let Detail = (props) => {
           联系客服
         </a>
         <a
+          disabled={!data.is_can_enroll}
           className={styles.btn}
           size="large"
-          style={{ backgroundColor: 'rgba(253, 159, 45,1)' }}
+          style={{ backgroundColor:data.is_can_enroll? 'rgba(253, 159, 45,1)':"#999" }}
           onClick={() => {
             enroll({ job_id: data.id }).then((res) => {
               if (res.code == 0) {
