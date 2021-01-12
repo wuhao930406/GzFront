@@ -11,9 +11,22 @@ export async function classify(params) {
   return request('/api/wechat/max_classify' + bodyParse(params));
 }
 
-//分类
+//岗位
 export async function job(params) {
   return request('/api/wechat/job' + bodyParse(params));
+}
+
+//岗位详情
+export async function jobdetail(params) {
+  return request('/api/wechat/job/' + params);
+}
+
+//立即报名
+export async function enroll(params) {
+  return request('/api/wechat/enroll', {
+    method: 'POST',
+    data: params,
+  });
 }
 
 //启用or禁用用户
@@ -27,14 +40,6 @@ export async function setenable(params) {
 //角色列表
 export async function role(params) {
   return request('/api/role' + bodyParse(params));
-}
-
-//创建角色
-export async function addrole(params) {
-  return request('/api/role', {
-    method: 'POST',
-    data: params,
-  });
 }
 
 //更新角色

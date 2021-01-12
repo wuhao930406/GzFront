@@ -2,9 +2,8 @@
 import { PullToRefresh, ListView } from 'antd-mobile';
 import ReactDOM from 'react-dom';
 import { connect } from 'umi';
-import scrollAnimation from '@/utils/scrollAnimation'
-import LoadingFooter from "../LoadingFooter"
-
+import scrollAnimation from '@/utils/scrollAnimation';
+import LoadingFooter from '../LoadingFooter';
 
 const data = [
   {
@@ -75,10 +74,7 @@ class PublicList extends React.Component {
     setTimeout(() => {
       genData();
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(
-          dataBlobs,
-          rowIDs,
-        ),
+        dataSource: this.state.dataSource.cloneWithRows(dataBlobs, rowIDs),
         isLoading: false,
         refreshing: false,
       });
@@ -108,17 +104,11 @@ class PublicList extends React.Component {
     setTimeout(() => {
       genData(++pageIndex);
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(
-          dataBlobs,
-          rowIDs,
-        ),
+        dataSource: this.state.dataSource.cloneWithRows(dataBlobs, rowIDs),
         isLoading: false,
       });
     }, 1000);
   };
-
-
-  
 
   render() {
     const separator = (sectionID, rowID) => (
@@ -170,7 +160,11 @@ class PublicList extends React.Component {
               <div>{obj.tags.join(' / ')}</div>
               <div>
                 <span
-                  style={{ color: '#f50', fontSize: 15, fontWeight: 'bolder' }}
+                  style={{
+                    color: '#f76b1c',
+                    fontSize: 15,
+                    fontWeight: 'bolder',
+                  }}
                 >
                   5600-7100
                 </span>{' '}
@@ -188,7 +182,9 @@ class PublicList extends React.Component {
                 alignItems: 'center',
               }}
             >
-              <span style={{ color: '#f50', fontSize: 20, marginBottom: -4 }}>
+              <span
+                style={{ color: '#f76b1c', fontSize: 20, marginBottom: -4 }}
+              >
                 25.5
               </span>
               <span style={{ marginBottom: 4 }}>元/小时</span>
@@ -198,31 +194,23 @@ class PublicList extends React.Component {
       );
     };
     let { Header } = this.props,
-      {
-        scrolltop,
-        dataSource,
-        isLoading,
-        refreshing,
-      } = this.state;
+      { scrolltop, dataSource, isLoading, refreshing } = this.state;
 
     return (
       <ListView
         ref={(el) => (this.lv = el)}
         dataSource={dataSource}
-        renderHeader={() => Header?(
-          <Header
-            scrolltop={scrolltop}
-            scrollRef={this.lv}
-          />
-        ):null}
+        renderHeader={() =>
+          Header ? <Header scrolltop={scrolltop} scrollRef={this.lv} /> : null
+        }
         renderFooter={() => (
-          <LoadingFooter isLoading={isLoading}></LoadingFooter> 
+          <LoadingFooter isLoading={isLoading}></LoadingFooter>
         )}
         renderRow={row}
         renderSeparator={separator}
         style={{
           overflow: 'auto',
-          height:"100%"
+          height: '100%',
         }}
         className={scrolltop > 0 ? 'notrans' : 'trans'}
         pageSize={4}
@@ -243,4 +231,4 @@ class PublicList extends React.Component {
   }
 }
 
-export default PublicList
+export default PublicList;

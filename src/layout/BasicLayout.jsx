@@ -4,13 +4,12 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import IconFont from '@/components/IconFont';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { KeepAliveLayout, connect } from 'umi';
-import getUserinfo from '@/utils/getUserinfo'
+import getUserinfo from '@/utils/getUserinfo';
 
 let Rendertopdom = ({ type, istop }) => {
   let iftop = useMemo(() => {
-    return istop
+    return istop;
   }, [istop]);
-
 
   if (iftop) {
     if (type == 'btn') {
@@ -27,40 +26,38 @@ let Rendertopdom = ({ type, istop }) => {
   }
 };
 
-
-
-
 let BasicLayout = (props) => {
-  let { children, route, location, dispatch, global: { istop } } = props,
+  let {
+      children,
+      route,
+      location,
+      dispatch,
+      global: { istop },
+    } = props,
     scrollRef = useRef(),
     scrollRefs = useRef(),
     scrollRefc = useRef();
 
   let [scrolltop, setscroll] = useState(0);
 
-  useEffect(()=>{
+  useEffect(() => {
     getUserinfo(props);
 
     dispatch({
       type: 'global/keyword',
-      payload: {is_all:1},
+      payload: { is_all: 1 },
     });
     dispatch({
       type: 'global/classify',
-      payload: {is_all:1},
+      payload: { is_all: 1 },
     });
-
-
-  },[])
+  }, []);
 
   useEffect(() => {
     dispatch({
       type: 'global/postData',
       payload: {
-        name: "",
-        min_classify_id: "",
-        max_classify_id: "",
-        pageIndex: 1
+        pageIndex: 1,
       },
     });
   }, [location.pathname]);
@@ -69,10 +66,8 @@ let BasicLayout = (props) => {
   // let handleScroll = (e) => {
   //   setscroll(e.target.istop);
   // };
-  
 
   return (
-
     <div
       style={{
         height: '100%',
@@ -81,7 +76,6 @@ let BasicLayout = (props) => {
         flexDirection: 'column',
         maxWidth: 1000,
         margin: '0 auto',
-        overflow: 'hidden',
       }}
     >
       <TabBar
@@ -89,26 +83,26 @@ let BasicLayout = (props) => {
         tintColor="#108ee9"
         barTintColor="white"
         prerenderingSiblingsNumber={0}
-        hidden={['/factory','/service','/center'].indexOf(location.pathname)==-1}
+        hidden={
+          ['/factory', '/service', '/center'].indexOf(location.pathname) == -1
+        }
       >
         <TabBar.Item
           title={<Rendertopdom istop={istop}></Rendertopdom>}
           key="factory"
           icon={<IconFont type="icon-factory" style={{ fontSize: 22 }} />}
-          selectedIcon={<Rendertopdom type='btn' istop={istop}></Rendertopdom>}
+          selectedIcon={<Rendertopdom type="btn" istop={istop}></Rendertopdom>}
           selected={location.pathname === '/factory'}
           onPress={() => {
             if (istop && location.pathname === '/factory') {
               dispatch({
                 type: 'global/istop',
-                payload: "0",
+                payload: '0',
               });
             }
             history.push('/factory');
-
           }}
           data-seed="logId"
-          style={{ overflow: 'hidden' }}
         >
           {/* <Scrollbars
             thumbMinSize={10}
@@ -169,4 +163,4 @@ let BasicLayout = (props) => {
 export default BasicLayout = connect(({ global, loading }) => ({
   global,
   loading,
-}))(BasicLayout)
+}))(BasicLayout);

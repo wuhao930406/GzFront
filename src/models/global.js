@@ -1,14 +1,20 @@
-import { keyword, classify } from '@/services/factory';
+import { keyword, classify, jobdetail } from '@/services/factory';
 
 const GlobalModel = {
   namespace: 'global',
   state: {
     istop: false,
     postData: {
-      name: "",
-      min_classify_id: "",
-      max_classify_id: "",
-      pageIndex: 1
+      name: '',
+      min_classify_id: '',
+      max_classify_id: '',
+      pageIndex: 1,
+    },
+    params: {
+      name: '',
+      min_classify_id: '',
+      max_classify_id: '',
+      pageIndex: 1,
     },
     keyword: [],
     classify: [],
@@ -23,27 +29,41 @@ const GlobalModel = {
     *postData({ payload }, { call, put, select }) {
       //paload 传入修改值即可
       const lastpostData = yield select((state) => state.global.postData);
-      console.log(payload)
-
       let newpost = {
         ...lastpostData,
-        ...payload
-      }
+        ...payload,
+      };
       yield put({
         type: 'save',
         payload: {
-          postData: newpost
+          postData: newpost,
         },
       });
-      return newpost
+      return newpost;
     },
+    *params({ payload }, { call, put, select }) {
+      //paload 传入修改值即可
+      const lastpostData = yield select((state) => state.global.params);
+      let newpost = {
+        ...lastpostData,
+        ...payload,
+      };
+      yield put({
+        type: 'save',
+        payload: {
+          params: newpost,
+        },
+      });
+      return newpost;
+    },
+
     *keyword({ payload }, { call, put, select }) {
       let response = yield call(keyword, payload);
       yield put({
         type: 'save',
         payload: { keyword: response?.data?.dataList },
       });
-      return response
+      return response;
     },
     *classify({ payload }, { call, put, select }) {
       let response = yield call(classify, payload);
@@ -51,7 +71,12 @@ const GlobalModel = {
         type: 'save',
         payload: { classify: response?.data?.dataList },
       });
-      return response
+      return response;
+    },
+
+    *jobdetail({ payload }, { call, put, select }) {
+      let response = yield call(jobdetail, payload);
+      return response;
     },
   },
   reducers: {

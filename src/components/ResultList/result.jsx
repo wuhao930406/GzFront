@@ -17,8 +17,8 @@ class ResultList extends React.Component {
       isLoading: true,
       scrolltop: 0,
       refreshing: false,
-      dataArr: [],
       isEmpty: false,
+      dataArr: [],
     };
   }
 
@@ -38,12 +38,12 @@ class ResultList extends React.Component {
   }
 
   componentDidMount() {
-    this.getsectiondata(this.props.global.params);
+    this.getsectiondata(this.props.global.postData);
   }
 
   onRefresh = () => {
     let {
-      global: { params },
+      global: { postData },
       dispatch,
     } = this.props;
     this.setState(
@@ -55,7 +55,7 @@ class ResultList extends React.Component {
       },
       () => {
         dispatch({
-          type: 'global/params',
+          type: 'global/postData',
           payload: {
             pageIndex: 1,
           },
@@ -68,16 +68,16 @@ class ResultList extends React.Component {
 
   onEndReached = (event) => {
     let {
-      global: { params },
+      global: { postData },
       dispatch,
     } = this.props;
     if (this.state.isLoading || !this.state.hasMore) {
       return;
     }
-    let pageIndex = params.pageIndex + 1;
+    let pageIndex = postData.pageIndex + 1;
     this.setState({ isLoading: true }, () => {
       dispatch({
-        type: 'global/params',
+        type: 'global/postData',
         payload: {
           pageIndex,
         },
@@ -93,8 +93,8 @@ class ResultList extends React.Component {
         scrollAnimation(this.state.scrolltop, 0, this.lv);
       }
     }
-    let prev = { ...this.props.global.params },
-      next = { ...np.global.params };
+    let prev = { ...this.props.global.postData },
+      next = { ...np.global.postData };
     delete prev.pageIndex;
     delete next.pageIndex;
     if (JSON.stringify(prev) !== JSON.stringify(next)) {
@@ -105,7 +105,7 @@ class ResultList extends React.Component {
           dataArr: [],
         },
         () => {
-          this.getsectiondata(np.global.params);
+          this.getsectiondata(np.global.postData);
         },
       );
     }

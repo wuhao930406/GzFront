@@ -9,25 +9,35 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import ResultList from '@/components/ResultList';
-import scrollAnimation from '@/utils/scrollAnimation'
-import IconFont from '@/components/IconFont'
-
+import scrollAnimation from '@/utils/scrollAnimation';
+import IconFont from '@/components/IconFont';
 
 const { Panel } = Collapse;
 
-let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
+let Header = ({
+  scrolltop,
+  scrollRef,
+  global: { keyword, classify, params },
+  dispatch,
+}) => {
   const [data, setdata] = useState([
-    'AiyWuByWklrrUDlFignR',
-    'TekJlZRVCjLFexlOCuWn',
-    'IJOtIlfsYdTyaDTRVrLI',
-  ]),
+      'AiyWuByWklrrUDlFignR',
+      'TekJlZRVCjLFexlOCuWn',
+      'IJOtIlfsYdTyaDTRVrLI',
+    ]),
     [curtags, setcurtag] = useState({}),
     [iftype, ciftype] = useState({
-      title: "",
+      title: '',
       visible: false,
-      curlist: []
-    })
+      curlist: [],
+    });
 
+  function setpostdata(val) {
+    dispatch({
+      type: 'global/params',
+      payload: val,
+    });
+  }
 
   return (
     <div>
@@ -39,19 +49,56 @@ let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
         onClose={() => {
           ciftype({
             ...iftype,
-            visible: false
-          })
+            visible: false,
+          });
         }}
         title={iftype.title}
         footer={false}
-        style={{ width: '95%', borderRadius: 12, overflow: "hidden", }}
+        style={{ width: '95%', borderRadius: 12, overflow: 'hidden' }}
       >
         <div>
-          {
-            iftype.curlist.map((it, i) => <a className="oneline" style={{ textAlign: "center" }} key={i} className="tag">
+          {iftype.curlist.map((it, i) => (
+            <a
+              className="oneline"
+              style={{
+                textAlign: 'center',
+                color: params.min_classify_id == it.id ? '#108ee9' : '#666',
+              }}
+              key={i}
+              className="tag"
+              onClick={() => {
+                ciftype({
+                  ...iftype,
+                  visible: false,
+                });
+                if (iftype.type == 'keyword') {
+                  dispatch({
+                    type: 'global/postData',
+                    payload: { name: it.name, pageIndex: 1 },
+                  }).then(() => {
+                    history.push('/search');
+                  });
+                } else {
+                  if (params.min_classify_id == it.id) {
+                    setpostdata({ min_classify_id: '', pageIndex: 1 });
+                  } else {
+                    setpostdata({ min_classify_id: it.id, pageIndex: 1 });
+                    setcurtag((curtags) => {
+                      let min_classifies = curtags.min_classifies,
+                        res = [
+                          ...min_classifies.filter((item) => item.id == it.id),
+                          ...min_classifies.filter((item) => item.id !== it.id),
+                        ];
+                      curtags.min_classifies = res;
+                      return curtags;
+                    });
+                  }
+                }
+              }}
+            >
               {it.name}
-            </a>)
-          }
+            </a>
+          ))}
         </div>
       </Modal>
       <Row
@@ -64,7 +111,7 @@ let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
             icon={<SearchOutlined />}
             className={styles.placebtn}
             onClick={() => {
-              history.push("/search")
+              history.push('/search');
             }}
           >
             搜索企业名称或关键字
@@ -111,8 +158,8 @@ let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
           activeKey={['1']}
           expandIcon={({ isActive }) => (
             <IconFont
-              type='icon-hot'
-              style={{ fontSize: 16, color: '#f50' }}
+              type="icon-hot"
+              style={{ fontSize: 16, color: '#f76b1c' }}
             />
           )}
           className="site-collapse-custom-collapse"
@@ -120,22 +167,52 @@ let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
           <Panel
             header={<span style={{ fontSize: 16 }}>热门标签</span>}
             key="1"
-            extra={<a style={{ color: '#f50', display: keyword.length < 5 ? "none" : "block" }} onClick={() => {
-              ciftype({
-                ...iftype,
-                title: "热门标签",
-                visible: true,
-                curlist: keyword,
-                type:"keyword"
-              })
-            }}>更多+</a>}
+            extra={
+              <a
+                style={{
+                  color: '#f76b1c',
+                  display: keyword.length < 5 ? 'none' : 'block',
+                }}
+                onClick={() => {
+                  ciftype({
+                    ...iftype,
+                    title: '热门标签',
+                    visible: true,
+                    curlist: keyword,
+                    type: 'keyword',
+                  });
+                }}
+              >
+                更多+
+              </a>
+            }
           >
-            <div style={{ display: "flex" }}>
-              {keyword.filter((it, i) => i < 4).map((it, i) => (
-                <a className="oneline" style={{ width: "25%", textAlign: "center" }} key={i} className="tag">
-                  {it.name}
-                </a>
-              ))}
+            <div style={{ display: 'flex' }}>
+              {keyword
+                .filter((it, i) => i < 4)
+                .map((it, i) => (
+                  <a
+                    className="oneline"
+                    style={{
+                      width: '25%',
+                      textAlign: 'center',
+                      color: params.name == it.name ? '#f76b1c' : '#666',
+                    }}
+                    key={i}
+                    className="tag"
+                    onClick={() => {
+                      //setpostdata({ name: it.name, pageIndex: 1 });
+                      dispatch({
+                        type: 'global/postData',
+                        payload: { name: it.name, pageIndex: 1 },
+                      }).then(() => {
+                        history.push('/search');
+                      });
+                    }}
+                  >
+                    {it.name}
+                  </a>
+                ))}
             </div>
           </Panel>
         </Collapse>
@@ -147,58 +224,87 @@ let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
             width: '100%',
             maxWidth: 1000,
             zIndex: 999,
-            transition: "all 0.4s"
+            transition: 'all 0.4s',
           }}
         >
           <Tabs
-            tabs={
-              [
-                { title: '所有企业', key: "-1" },
-                ...classify.map(it => ({
-                  ...it,
-                  title: it.name,
-                  key: it.id,
-                }))
-              ]
-            }
+            tabs={[
+              { title: '所有企业', key: 0, id: 0 },
+              ...classify.map((it) => ({
+                ...it,
+                title: it.name,
+                key: it.id,
+              })),
+            ]}
             onTabClick={(tab) => {
               setcurtag(tab);
-              scrollRef && scrollAnimation(scrolltop, 245, scrollRef)
+              scrollRef && scrollAnimation(scrolltop, 245, scrollRef);
+              setpostdata({
+                max_classify_id: tab.id,
+                min_classify_id: '',
+                pageIndex: 1,
+              });
             }}
           />
 
           {curtags.min_classifies && (
             <Row style={{ padding: 8, backgroundColor: '#f9f9f9' }}>
-              <Col flex="auto" className="center" style={{ justifyContent: "flex-start" }}>
+              <Col
+                flex="auto"
+                className="center"
+                style={{ justifyContent: 'flex-start' }}
+              >
                 {curtags.min_classifies
                   .filter((it, i) => i < 4)
                   .map((it, i) => (
                     <a
                       key={i}
                       className="tag"
-                      style={{ width: "25%", textAlign: 'center', marginBottom: 0 }}
+                      style={{
+                        width: '25%',
+                        textAlign: 'center',
+                        marginBottom: 0,
+                        color:
+                          params.min_classify_id == it.id ? '#108ee9' : '#666',
+                      }}
+                      onClick={() => {
+                        if (params.min_classify_id == it.id) {
+                          setpostdata({ min_classify_id: '', pageIndex: 1 });
+                        } else {
+                          setpostdata({ min_classify_id: it.id, pageIndex: 1 });
+                        }
+                      }}
                     >
                       {it.name}
                     </a>
                   ))}
               </Col>
-              {
-                curtags.min_classifies.length > 4 && <Col flex="60px" className="center" onClick={()=>{
-                  ciftype({
-                    ...iftype,
-                    visible:true,
-                    title:curtags.title,
-                    curlist:curtags.min_classifies,
-                    type:"classify"
-                  })
-                }}>
+              {curtags.min_classifies.length > 4 && (
+                <Col
+                  flex="60px"
+                  className="center"
+                  onClick={() => {
+                    ciftype({
+                      ...iftype,
+                      visible: true,
+                      title: curtags.title,
+                      curlist: curtags.min_classifies,
+                      type: 'classify',
+                    });
+                  }}
+                >
                   <a>更多+</a>
                 </Col>
-              }
-
+              )}
             </Row>
           )}
         </div>
+        <div
+          style={{
+            width: '100%',
+            height: scrolltop > 245 ? (!curtags.min_classifies ? 44 : 88) : 0,
+          }}
+        ></div>
       </section>
     </div>
   );
@@ -207,8 +313,7 @@ let Header = ({ scrolltop, scrollRef, global: { keyword, classify } }) => {
 Header = connect(({ global, loading }) => ({
   global,
   loading,
-}))(Header)
-
+}))(Header);
 
 export default (props) => {
   return <ResultList Header={Header}></ResultList>;

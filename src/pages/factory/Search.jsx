@@ -9,16 +9,21 @@ import {
 } from '@ant-design/icons';
 import IconFont from '@/components/IconFont';
 import { CSSTransition } from 'react-transition-group';
-import ResultList from '@/components/ResultList';
+import ResultList from '@/components/ResultList/result';
 import styles from './index.less';
 
 const { Panel } = Collapse;
 
-let Search = ({ global: { keyword }, dispatch }) => {
+let Search = (props) => {
+  let {
+    global: { keyword },
+    dispatch,
+  } = props;
   let searchref = useRef(),
     [searchistory, changehis] = useState(
       localStorage.getItem('SH') ? JSON.parse(localStorage.getItem('SH')) : [],
-    ), [postData, changepostdata] = useState({ name: '' });
+    ),
+    [postData, changepostdata] = useState(props.global.postData);
 
   useEffect(() => {
     searchref?.current?.focus();
@@ -33,6 +38,7 @@ let Search = ({ global: { keyword }, dispatch }) => {
       },
     });
   }
+  console.log(postData);
 
   return (
     <div className={styles.search}>
@@ -62,7 +68,7 @@ let Search = ({ global: { keyword }, dispatch }) => {
           cancelText={<span style={{ color: '#000' }}>搜索</span>}
           value={postData.name}
           onChange={(val) => {
-            let value = val && val.replace(/\s*/g, '');
+            let value = val; //&& val.replace(/\s*/g, '');
             if (value) {
               changepostdata({ name: value });
             } else {
@@ -70,15 +76,15 @@ let Search = ({ global: { keyword }, dispatch }) => {
             }
           }}
           onCancel={(val) => {
-            let value = val && val.replace(/\s*/g, '');
+            let value = val; //&& val.replace(/\s*/g, '');
+            setpostdata(value);
             if (value) {
-              setpostdata(value);
               changepostdata({ name: value });
               let newarr = new Set([...searchistory, value]);
               localStorage.setItem('SH', JSON.stringify([...newarr]));
               changehis([...newarr]);
             } else {
-              Toast.info('请输入文字搜索....');
+              //Toast.info('请输入文字搜索....');
               changepostdata({ name: '' });
             }
           }}
@@ -119,6 +125,7 @@ let Search = ({ global: { keyword }, dispatch }) => {
                   span={6}
                   onClick={() => {
                     changepostdata({ name: it });
+                    setpostdata(it);
                   }}
                 >
                   <a
@@ -143,13 +150,20 @@ let Search = ({ global: { keyword }, dispatch }) => {
           bordered={false}
           activeKey={['1']}
           expandIcon={({ isActive }) => (
-            <IconFont type="icon-hot" style={{ fontSize: 16, color: '#f50' }} />
+            <IconFont
+              type="icon-hot"
+              style={{ fontSize: 16, color: '#f76b1c' }}
+            />
           )}
           className="nobordercollapse"
         >
           <Panel
             header={<span style={{ fontSize: 16 }}>热门标签</span>}
             key="1"
+            // extra={<a onClick={() => {
+            //   changepostdata({ name:''});
+            //   setpostdata('');
+            // }}>全部</a>}
           >
             <Row gutter={6}>
               {keyword.map((it, i) => (
@@ -158,6 +172,7 @@ let Search = ({ global: { keyword }, dispatch }) => {
                   span={6}
                   onClick={() => {
                     changepostdata({ name: it.name });
+                    setpostdata(it.name);
                   }}
                 >
                   <a
