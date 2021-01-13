@@ -34,6 +34,13 @@ export async function customer(params) {
   return request('/api/wechat/customer' + bodyParse(params));
 }
 
+//门店列表
+export async function store(params) {
+  return request('/api/wechat/store' + bodyParse(params));
+}
+
+
+
 //启用or禁用用户
 export async function setenable(params) {
   return request('/api/user/set_enable', {
@@ -96,27 +103,6 @@ export async function resetuser(params) {
 //用户详情
 export async function getuser(params) {
   return request('/api/user/' + params);
-}
-
-//门店列表
-export async function store(params) {
-  return request('/api/store' + bodyParse(params));
-}
-
-//创建门店
-export async function addstore(params) {
-  return request('/api/store', {
-    method: 'POST',
-    data: params,
-  });
-}
-
-//更新门店
-export async function editstore(params) {
-  return request('/api/store/' + params.id, {
-    method: 'PUT',
-    data: params,
-  });
 }
 
 //删除门店

@@ -6,7 +6,7 @@ import { connect } from 'umi';
 import styles from './index.less';
 import IconFont from '@/components/IconFont';
 import PublicList from '@/components/PublicList';
-import { customer } from '@/services/factory';
+import { customer,store } from '@/services/factory';
 
 const tabs = [
   {
@@ -34,11 +34,19 @@ const tabs = [
 ];
 
 let service = (props) => {
-  let {} = props;
+  let [index,setindex] = useState(0);
 
   return (
     <div style={{ height: '100%' }}>
-      <Tabs tabs={tabs} tabBarInactiveTextColor="#666">
+      <Tabs 
+        tabs={tabs} 
+        tabBarInactiveTextColor="#666" 
+        tabBarActiveTextColor={index==0?"#fd9093":"#108ee9"} 
+        tabBarUnderlineStyle={{borderColor:index==0?"#fd9093":"#108ee9"}}
+        onChange={(_,index)=>{
+          setindex(index)
+        }}
+      >
         <div style={{ height: '100%' }}>
           <PublicList
             post={customer}
@@ -53,7 +61,8 @@ let service = (props) => {
         </div>
         <div style={{ height: '100%' }}>
           <PublicList
-            post={customer}
+            post={store}
+            type="store"
             Header={() => (
               <img
                 src={require('@/assets/service_2.jpg')}

@@ -10,7 +10,7 @@ import { useState } from 'react';
 import Details from './Details'
 
 
-export default () => {
+export default (props) => {
   let [visible,cv]=useState(false),
       [islogin,changelogin]=useState(false);
 
@@ -39,7 +39,7 @@ export default () => {
         <div style={{ color: "#fff" }}>{islogin ? "未注册" : <QrcodeOutlined style={{ fontSize: 20 }} />}</div>
       </List.Item>
       <div>
-          <Details ></Details>
+          <Details {...props}></Details>
       </div>    
 
 

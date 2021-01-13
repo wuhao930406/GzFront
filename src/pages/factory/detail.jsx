@@ -1,6 +1,6 @@
-import { Carousel, Toast } from 'antd-mobile';
+import { Carousel, Toast, Modal } from 'antd-mobile';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Row, Col, Collapse, Tag, Button } from 'antd';
+import { Row, Col, Avatar, Tag, Button } from 'antd';
 import { connect, history } from 'umi';
 import {
   LeftOutlined,
@@ -11,14 +11,16 @@ import IconFont from '@/components/IconFont';
 import { CSSTransition } from 'react-transition-group';
 import ResultList from '@/components/ResultList/result';
 import styles from './index.less';
-import { enroll } from '@/services/factory';
+import { enroll, customer } from '@/services/factory';
 
 let Detail = (props) => {
   let {
-      location: { query },
-      dispatch,
-    } = props,
-    [data, setdata] = useState({});
+    location: { query },
+    dispatch,
+  } = props,
+    [data, setdata] = useState({}),
+    [customers, setcustomers] = useState([]),
+    [visible, cv] = useState(false);
 
   useEffect(() => {
     dispatch({
@@ -27,6 +29,9 @@ let Detail = (props) => {
     }).then((res) => {
       setdata(res.data);
     });
+    customer({ is_all: 1 }).then(res => {
+      setcustomers(res.data.dataList)
+    })
   }, [query.id]);
 
   console.log(data);
@@ -182,7 +187,9 @@ let Detail = (props) => {
 
       <div style={{ height: 54, backgroundColor: '#f0f0f0' }}></div>
       <div className={styles.footer}>
-        <a className={styles.btn} size="large">
+        <a className={styles.btn} size="large" onClick={() => {
+          cv(true)
+        }}>
           <PhoneOutlined style={{ marginRight: 6 }} rotate={90} />
           联系客服
         </a>
@@ -213,6 +220,47 @@ let Detail = (props) => {
           立即报名
         </a>
       </div>
+
+      <Modal
+        visible={visible}
+        transparent
+        maskClosable={true}
+        onClose={() => {
+          cv(false)
+        }}
+        title="客服列表"
+        footer={false}
+      >
+        <div style={{ maxHeight: "40vh", overflow: 'scroll' }}>
+          {
+            customers.map((item, i) => {
+              return <a key={i} className="kefuitem" href={`tel:${item.tel}`} style={{padding:"12px"}}>
+                <div className="center">
+                  <Avatar
+                    size="large"
+                    style={{
+                      marginRight: 12,
+                      backgroundColor: '#fd9093',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    icon={<CustomerServiceOutlined style={{ fontSize: 16 }} />}
+                  ></Avatar>
+                  <span style={{ fontSize: 16 }}>{item.name}</span>
+                </div>
+                <span>
+                  <i style={{ color: '#999' }}>
+                    <PhoneOutlined style={{ marginRight: 6 }} rotate={90} />
+                    {item.tel}
+                  </i>
+                </span>
+              </a>
+
+            })
+          }
+        </div>
+      </Modal>
     </div>
   );
 };

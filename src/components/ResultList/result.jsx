@@ -106,7 +106,7 @@ class ResultList extends React.Component {
         },
         () => {
           this.getsectiondata(np.global.postData);
-        },
+        }
       );
     }
   }

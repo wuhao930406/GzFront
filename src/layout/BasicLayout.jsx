@@ -63,9 +63,9 @@ let BasicLayout = (props) => {
   }, [location.pathname]);
   //   scrollRef?.current?.scrollToTop();
 
-  // let handleScroll = (e) => {
-  //   setscroll(e.target.istop);
-  // };
+  let handleScroll = (e) => {
+    setscroll(e.target.scrollTop);
+  };
 
   return (
     <div
@@ -152,8 +152,9 @@ let BasicLayout = (props) => {
             ref={scrollRefc}
             style={{ width: '100%', height: '100%' }}
             hideTracksWhenNotNeeded={true}
+            onScroll={(e)=>handleScroll(e)}
           >
-            {children}
+            {React.cloneElement(children,{scrolltop:scrolltop}) }
           </Scrollbars>
         </TabBar.Item>
       </TabBar>

@@ -5,8 +5,9 @@ import { connect, history } from 'umi';
 import scrollAnimation from '@/utils/scrollAnimation';
 import LoadingFooter from '../LoadingFooter';
 import { PhoneOutlined, CustomerServiceOutlined } from '@ant-design/icons';
-
 import { Avatar } from 'antd';
+import IconFont from '@/components/IconFont'
+
 
 class PublicList extends React.Component {
   constructor(props) {
@@ -115,7 +116,7 @@ class PublicList extends React.Component {
               size="large"
               style={{
                 marginRight: 12,
-                backgroundColor: '#1890ff',
+                backgroundColor: '#fd9093',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -132,18 +133,28 @@ class PublicList extends React.Component {
           </span>
         </a>
       ) : (
-        <div
-          key={rowData.id}
-          style={{ padding: '0 12px' }}
-          onClick={() => {
-            history.push({
-              pathname: '/detail',
-              query: {
-                id: rowData.id,
-              },
-            });
-          }}
-        ></div>
+        <a key={rowData.id} className="kefuitem" href={`tel:${rowData.tel}`}>
+          <div className="center">
+            <Avatar
+              size="large"
+              style={{
+                marginRight: 12,
+                backgroundColor: '#1890ff',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              icon={<IconFont type="icon-dian" style={{ fontSize: 16 }} />}
+            ></Avatar>
+            <span style={{ fontSize: 16 }}>{rowData.name}</span>
+          </div>
+          <span>
+            <i style={{ color: '#999' }}>
+              <PhoneOutlined style={{ marginRight: 6 }} rotate={90} />
+              {rowData.tel}
+            </i>
+          </span>
+        </a>
       );
     };
 
