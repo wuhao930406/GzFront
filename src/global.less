@@ -25,6 +25,13 @@
 
 .am-list-view-scrollview-content {
   width: 100% !important;
+  height: 100% !important;
+  .am-pull-to-refresh-content-wrapper {
+    min-height: 100% !important;
+    .am-pull-to-refresh-content {
+      min-height: 100% !important;
+    }
+  }
 }
 
 .am-list-view-scrollview {
@@ -178,4 +185,11 @@
 
 .formart {
   white-space: pre-wrap;
+}
+.kefuitem {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #000000;
 }

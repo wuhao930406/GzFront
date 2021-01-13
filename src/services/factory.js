@@ -29,6 +29,11 @@ export async function enroll(params) {
   });
 }
 
+//客服列表
+export async function customer(params) {
+  return request('/api/wechat/customer' + bodyParse(params));
+}
+
 //启用or禁用用户
 export async function setenable(params) {
   return request('/api/user/set_enable', {

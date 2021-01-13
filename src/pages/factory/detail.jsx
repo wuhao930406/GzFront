@@ -102,8 +102,12 @@ let Detail = (props) => {
         </p>
         <p>
           {data.keywords &&
-            data.keywords.map((it) => {
-              return <a className="tag">{it.keyword_name}</a>;
+            data.keywords.map((it, i) => {
+              return (
+                <a key={i} className="tag">
+                  {it.keyword_name}
+                </a>
+              );
             })}
         </p>
         <p>
@@ -186,7 +190,11 @@ let Detail = (props) => {
           disabled={!data.is_can_enroll}
           className={styles.btn}
           size="large"
-          style={{ backgroundColor:data.is_can_enroll? 'rgba(253, 159, 45,1)':"#999" }}
+          style={{
+            backgroundColor: data.is_can_enroll
+              ? 'rgba(253, 159, 45,1)'
+              : '#999',
+          }}
           onClick={() => {
             enroll({ job_id: data.id }).then((res) => {
               if (res.code == 0) {
