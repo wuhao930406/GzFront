@@ -84,14 +84,32 @@
   width: 110px !important;
   flex: initial !important;
 }
-
+.am-list-item .am-list-line {
+  padding-right: 0 !important;
+}
+.am-list-item .am-list-line-multiple {
+  padding-right: 0 !important;
+}
+.am-list-item .am-list-line .am-list-content {
+  font-size: 16px !important;
+}
+.am-list-line-wrap {
+  .am-list-content {
+    width: 100% !important;
+    flex: initial !important;
+    .am-list-brief {
+      white-space: pre-wrap !important;
+      text-overflow: initial !important;
+    }
+  }
+}
 .am-list-extra {
   flex: 1 !important;
   text-align: right;
 }
 
 .totitle {
-  background-color: #1fc8db;
+  background-color: #5ad6e4;
   background-image: linear-gradient(
     141deg,
     #1dc7f4 0%,
@@ -163,20 +181,28 @@
   transition: all 300ms;
 }
 
-.opacity-enter {
-  opacity: 0;
+.alerts-enter {
+  height: 0px;
+  overflow: hidden;
 }
-.opacity-enter-active {
-  opacity: 1;
-  transition: opacity 300ms;
+
+.alerts-enter-active {
+  height: 200px;
+  overflow: hidden;
+  transition: all 300ms;
 }
-.opacity-exit {
-  opacity: 1;
+
+.alerts-exit {
+  height: 200px;
+  overflow: hidden;
 }
-.opacity-exit-active {
-  opacity: 0;
-  transition: opacity 300ms;
+
+.alerts-exit-active {
+  height: 0px;
+  overflow: hidden;
+  transition: all 300ms;
 }
+
 .slider {
   width: 100%;
   height: 8px;
@@ -192,4 +218,48 @@
   align-items: center;
   justify-content: space-between;
   color: #000000;
+}
+.title {
+  font-size: 16px;
+  color: #000;
+  padding-left: 12px;
+  position: relative;
+  margin-bottom: 12px;
+
+  &::before {
+    position: absolute;
+    content: '';
+    width: 4px;
+    height: 14px;
+    left: 0;
+    top: 4px;
+    background-color: @primary-color;
+  }
+}
+.linerborder {
+  animation: toscale 0.6s linear;
+}
+
+@keyframes toscale {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.96);
+  }
+  50% {
+    transform: scale(0.94);
+  }
+  75% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.anticon-right {
+  svg {
+    transition: all 0.4s !important;
+  }
 }

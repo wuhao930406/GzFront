@@ -94,7 +94,7 @@ let Search = (props) => {
       <CSSTransition
         in={searchistory.length > 0 && !postData.name}
         timeout={300}
-        classNames="alert"
+        classNames="scale"
         unmountOnExit
       >
         <Collapse
