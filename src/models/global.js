@@ -1,4 +1,4 @@
-import { keyword, classify, jobdetail } from '@/services/factory';
+import { keyword, classify, jobdetail, userinfo } from '@/services/factory';
 
 const GlobalModel = {
   namespace: 'global',
@@ -18,6 +18,7 @@ const GlobalModel = {
     },
     keyword: [],
     classify: [],
+    userinfo: {},
   },
   effects: {
     *istop({ payload }, { call, put, select }) {
@@ -73,7 +74,14 @@ const GlobalModel = {
       });
       return response;
     },
-
+    *userinfo({ payload }, { call, put, select }) {
+      let response = yield call(userinfo, payload);
+      yield put({
+        type: 'save',
+        payload: { userinfo: response?.data},
+      });
+      return response;
+    },
     *jobdetail({ payload }, { call, put, select }) {
       let response = yield call(jobdetail, payload);
       return response;

@@ -8,11 +8,15 @@ import {
 } from '@ant-design/icons';
 import { useState } from 'react';
 import Details from './Details'
+import { connect ,useRequest} from "umi"
+import {train_record} from '@/services/factory'
 
 
-export default (props) => {
+let Center = (props) => {
   let [visible,cv]=useState(false),
-      [islogin,changelogin]=useState(false);
+      [islogin,changelogin]=useState(false),
+      {global:{userinfo}} = props;
+
 
   return (
     <div>
@@ -31,10 +35,10 @@ export default (props) => {
       }}>
         <List.Item.Meta
           avatar={
-            <Avatar style={{ width: "20vw", height: "20vw" }} src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+            <Avatar style={{ width: "16vw", height: "16vw" }} src={userinfo.head_image?userinfo.head_image:require("@/assets/user.png")} />
           }
-          title={<a style={{ fontSize: 22, display: "block", margin: "6px 0",color:"#fff" }}>张三</a>}
-          description={<span style={{ display: "block", margin: "6px 0",color:"#fff"  }}>15353698841</span>}
+          title={<a style={{ fontSize: 22, display: "block", margin: "0px 0",color:"#fff" }}>{userinfo.name?userinfo.name:"三保打工网"}</a>}
+          description={<span style={{ display: "block", margin: "6px 0",color:"#fff"  }}>{userinfo.city?userinfo.city:"中国"}</span>}
         />
         <div style={{ color: "#fff" }}>{islogin ? "未注册" : <QrcodeOutlined style={{ fontSize: 20 }} />}</div>
       </List.Item>
@@ -46,3 +50,7 @@ export default (props) => {
     </div>
   );
 };
+export default connect(({ global, loading }) => ({
+  global,
+  loading,
+}))(Center);

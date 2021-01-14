@@ -51,6 +51,9 @@ let BasicLayout = (props) => {
       type: 'global/classify',
       payload: { is_all: 1 },
     });
+     dispatch({
+      type: 'global/userinfo',
+    });
   }, []);
 
   useEffect(() => {
@@ -162,7 +165,7 @@ let BasicLayout = (props) => {
   );
 };
 
-export default BasicLayout = connect(({ global, loading }) => ({
+export default connect(({ global, loading }) => ({
   global,
   loading,
 }))(BasicLayout);

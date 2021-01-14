@@ -39,6 +39,18 @@ export async function store(params) {
   return request('/api/wechat/store' + bodyParse(params));
 }
 
+//用户信息
+export async function userinfo() {
+  return request('/api/wechat/user/info');
+}
+
+
+//用户信息
+export async function train_record(params) {
+  return request('/api/wechat/train_record' + bodyParse(params));
+}
+
+
 
 
 //启用or禁用用户
