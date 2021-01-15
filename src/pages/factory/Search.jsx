@@ -38,7 +38,6 @@ let Search = (props) => {
       },
     });
   }
-  console.log(postData);
 
   return (
     <div className={styles.search}>

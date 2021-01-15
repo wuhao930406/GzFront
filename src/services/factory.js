@@ -44,14 +44,15 @@ export async function userinfo() {
   return request('/api/wechat/user/info');
 }
 
-
-//用户信息
+//乘车记录
 export async function train_record(params) {
   return request('/api/wechat/train_record' + bodyParse(params));
 }
 
-
-
+//报名历史
+export async function getenroll(params) {
+  return request('/api/wechat/enroll' + bodyParse(params));
+}
 
 //启用or禁用用户
 export async function setenable(params) {

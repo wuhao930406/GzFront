@@ -22,16 +22,21 @@ export default [
         title: '岗位信息',
         component: '@/pages/factory/detail',
       },
-
       {
         path: '/service',
         title: '服务中心',
         component: '@/pages/service',
       },
+
       {
         path: '/center',
         title: '个人中心',
         component: '@/pages/center',
+      },
+      {
+        path: '/enroll',
+        title: '报名记录',
+        component: '@/pages/center/enroll',
       },
     ],
   },
