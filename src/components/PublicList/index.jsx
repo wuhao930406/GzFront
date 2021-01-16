@@ -1,5 +1,5 @@
 /* eslint no-dupe-keys: 0, no-mixed-operators: 0 */
-import { PullToRefresh, ListView } from 'antd-mobile';
+import { PullToRefresh, ListView, Badge } from 'antd-mobile';
 import ReactDOM from 'react-dom';
 import { connect, history } from 'umi';
 import scrollAnimation from '@/utils/scrollAnimation';
@@ -7,7 +7,8 @@ import LoadingFooter from '../LoadingFooter';
 import { PhoneOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import { Avatar } from 'antd';
 import IconFont from '@/components/IconFont'
-
+import { List, Tag } from 'antd'
+import moment from 'moment';
 
 class PublicList extends React.Component {
   constructor(props) {
@@ -83,11 +84,11 @@ class PublicList extends React.Component {
 
   render() {
     let {
-        Header,
-        global: { istop },
-        dispatch,
-        type,
-      } = this.props,
+      Header,
+      global: { istop },
+      dispatch,
+      type,
+    } = this.props,
       {
         scrolltop,
         dataSource,
@@ -107,8 +108,7 @@ class PublicList extends React.Component {
       />
     );
     const row = (rowData) => {
-      //let poster = rowData.factory.factory_image.map((it) => it.preview_url);
-
+      let poster = rowData?.factory?.factory_image ? rowData.factory.factory_image.map((it) => it.preview_url) : [];
       return type == 'customer' ? (
         <a key={rowData.id} className="kefuitem" href={`tel:${rowData.tel}`}>
           <div className="center">
@@ -132,7 +132,7 @@ class PublicList extends React.Component {
             </i>
           </span>
         </a>
-      ) : (
+      ) : type == 'store' ? (
         <a key={rowData.id} className="kefuitem" href={`tel:${rowData.tel}`}>
           <div className="center">
             <Avatar
@@ -155,7 +155,49 @@ class PublicList extends React.Component {
             </i>
           </span>
         </a>
-      );
+      ) : (
+            <List.Item
+              style={{ padding: 12 }}
+              onClick={()=>{
+                
+
+              }}
+            >
+              <List.Item.Meta
+                avatar={
+                  <Badge text={rowData.status_name} corner style={{ backgroundColor: rowData.status == "refused" ? "red" : rowData.status == "quit" ? "grey" : "green", fontSize: 12, right: -22 }}>
+                    <Avatar src={poster[0]} shape="square" size={64} />
+                  </Badge>
+                }
+                title={<a style={{ fontSize: 16, color: "#000", display: "flex" }}>
+                  <span className="oneline" style={{ flex: 1, display: "block" }}>
+                    {rowData.job.name}
+                  </span>
+                  <b style={{
+                    color: '#f76b1c',
+                    fontSize: 15,
+                    fontWeight: 'bolder',
+                    paddingLeft: 12,
+                    fontSize: 18,
+                    display: "block",
+                    width: "100px",
+                    textAlign:"right"
+                  }}>
+                    {rowData.job.hour_salary}
+                    <span style={{ fontSize: 14 }}>元/小时</span>
+                  </b>
+                </a>}
+                description={
+                  <div style={{ display: "flex", paddingTop: 8 }}>
+                    <span className='oneline' style={{ flex: 1 }}>工厂: {rowData.factory.name}</span>
+                    <span style={{ width: 120,textAlign:"right" }}>{moment(rowData.created_at).format("YYYY-MM-DD HH:mm")}</span>
+                  </div>
+                }
+              />
+              <div>
+              </div>
+            </List.Item>
+          );
     };
 
     return (

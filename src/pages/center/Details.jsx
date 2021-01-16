@@ -1,4 +1,4 @@
-import { List, Tabs, Badge, Calendar } from 'antd-mobile';
+import { List, Tabs, Badge, Calendar, PickerView, Modal, Toast } from 'antd-mobile';
 import {
   RightOutlined,
   SwapRightOutlined,
@@ -9,47 +9,87 @@ import {
 } from '@ant-design/icons';
 import { CSSTransition } from 'react-transition-group';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Input, Button } from 'antd';
+import { Input, Button, Empty } from 'antd';
 import moment, { months } from 'moment';
-import { connect, useRequest, Link } from 'umi';
-import { train_record } from '@/services/factory';
+import { connect, useRequest, Link, history } from 'umi';
+import { getrain_record, stations } from '@/services/factory';
+import Auth from '@/components/Auth';
+import Job from "./components/job"
 
 const now = new Date();
 const Item = List.Item;
 const Brief = Item.Brief;
 const tabs = [
-  { title: <Badge dot>报名信息</Badge> },
+  { title: <Badge>报名信息</Badge> },
   { title: <Badge>两城宜家</Badge> },
 ];
 
-export default ({ scrolltop }) => {
+export default (props) => {
+  const { scrolltop, dispatch } = props;
   const [shown, setshown] = useState(false),
-    [show, cshow] = useState(false),
+    [show, cshow] = useState(false),//日历
+    [visible, setvisible] = useState(false),//选择出发目的地
     [search, setsearch] = useState({
       start: null,
       end: null,
       time: null,
+      type: "start"
     });
-  let tr = useRequest(() => train_record({ is_all: 1 }));
+  let tr = useRequest(() => getrain_record({ is_all: 1 })),
+    station = useRequest(() => stations())
 
-  let Hearder = () => {
-    return (
+  function Hearder(type, title) {
+    return type == "Calendar" ? (
       <div className="rowheader">
-        <CloseOutlined style={{ opacity: 0, fontSize: 16 }}></CloseOutlined>
-        <span style={{ textAlign: 'center', flex: 1, fontSize: 16 }}>
-          选择出发日期
-        </span>
         <CloseOutlined
           style={{ color: 'red', fontSize: 16 }}
           onClick={() => {
             cshow(false);
           }}
         ></CloseOutlined>
+        <span style={{ textAlign: 'center', flex: 1, fontSize: 16 }}>
+          {title}
+        </span>
+        <CloseOutlined style={{ opacity: 0, fontSize: 16 }}></CloseOutlined>
       </div>
-    );
+    ) : (
+        <div className="rowheader">
+          <span onClick={() => {
+            setvisible(false);
+          }}>取消</span>
+          <span style={{ textAlign: 'center', flex: 1, fontSize: 16 }}>
+            {title}
+          </span>
+          <a onClick={() => {
+            if (!search.select || search.select == '请选择') {
+              Toast.info('请选择出发/目的地...', 2, null, false);
+              return
+            }
+            if (search.type == 'start' && JSON.stringify(search.select) == JSON.stringify(search.end)) {
+              Toast.info('出发/目的地不可相同...', 2, null, false);
+              return
+            }
+            if (search.type == 'end' && JSON.stringify(search.select) == JSON.stringify(search.start)) {
+              Toast.info('出发/目的地不可相同...', 2, null, false);
+              return
+            }
+            setsearch({
+              ...search,
+              [search.type]: search.select
+            })
+            setvisible(false);
+          }}>
+            确定
+          </a>
+        </div>
+      );
   };
 
-  console.log(tr);
+  //console.log(tr, station);
+
+  let options = station.data ? ['请选择', ...new Set([...station.data.end_stations, ...station.data.start_stations])] : ['请选择'];
+
+  //console.log(options)
   return (
     <div>
       <Calendar
@@ -59,29 +99,45 @@ export default ({ scrolltop }) => {
           cshow(false);
         }}
         onConfirm={(start, end) => {
-          console.log(
-            moment(start).format('YYYY-MM-DD HH:mm:ss'),
-            moment(end).format('YYYY-MM-DD HH:mm:ss'),
-          );
           setsearch({
             ...search,
-            time: moment(end).format('YYYY-MM-DD HH:mm:ss'),
+            time: moment(start).format('YYYY-MM-DD'),
+            start_date: moment(start).startOf("day").format('YYYY-MM-DD HH:mm:ss'),
+            end_date: moment(start).endOf("day").format('YYYY-MM-DD HH:mm:ss')
           });
           cshow(false);
         }}
         minDate={new Date(+now - 0)}
         maxDate={new Date(+now + 31536000000)}
-        renderHeader={Hearder}
+        renderHeader={() => Hearder("Calendar", "选择出发日期")}
       />
+
+      <Modal
+        popup
+        visible={visible}
+        onClose={() => setvisible(false)}
+        animationType="slide-up"
+      >
+        {Hearder("select", `选择${search.type == 'start' ? "出发地" : "目的地"}`)}
+        <PickerView
+          onChange={(val) => {
+            setsearch({
+              ...search,
+              select: val
+            })
+          }}
+          value={search['select']}
+          data={options.map(it => ({
+            label: it, value: it
+          }))}
+          cascade={false}
+        />
+      </Modal>
+
+
       <Tabs
         tabs={tabs}
         initialPage={1}
-        onChange={(tab, index) => {
-          console.log('onChange', index, tab);
-        }}
-        onTabClick={(tab, index) => {
-          console.log('onTabClick', index, tab);
-        }}
         renderTabBar={(props) => {
           return (
             <div
@@ -98,102 +154,28 @@ export default ({ scrolltop }) => {
           );
         }}
       >
-        <div
-          style={{
-            backgroundColor: '#fff',
-            paddingTop: scrolltop > 130 ? 44 : 0,
-            paddingBottom: 12,
-          }}
-        >
-          <List className="my-list" style={{ paddingRight: 15, width: '100%' }}>
-            <Item extra={'dnf客服'}>岗位</Item>
-            <Item extra={'南通鞋厂'}>工厂名称</Item>
-            <Item extra={'江苏省南通市'}>工厂地址</Item>
-            <Item extra={'13218918820'}>工厂联系方式</Item>
-            <Item
-              extra={
-                <span style={{ color: 'rgb(247, 107, 28)' }}>
-                  <b style={{ fontSize: 18 }}>20.0 - 30.0 </b>元
-                </span>
-              }
+        <Job {...props}></Job>
+        <div style={{ backgroundColor: '#f9f9f9', padding: '12px 0px' }}>
+          <Auth>
+            <div
+              style={{
+                padding: 12,
+                backgroundColor: 'rgb(253, 144, 147)',
+                fontSize: 16,
+                color: '#fff',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                margin: '0 12px',
+              }}
+              onClick={() => {
+                setshown(!shown);
+              }}
             >
-              月薪
-            </Item>
-            <Item
-              extra={
-                <span style={{ color: 'rgb(247, 107, 28)' }}>
-                  <b style={{ fontSize: 18 }}>1 </b>元
-                </span>
-              }
-            >
-              时薪
-            </Item>
-            <Item extra={'免费午餐'}>补贴</Item>
-            <Item multipleLine extra={'技术企业 / 操作工'}>
-              分类
-            </Item>
-            <Item extra={'高时薪'}>关键词</Item>
-            <Item multipleLine wrap>
-              <span className="title">福利</span>
-              <Brief>
-                毒孩做二休五做二休五做二休五做二休五做二休五做二休五做二休五做二休五做二休五做二休五做二休五做二休五
-              </Brief>
-            </Item>
-            <Item multipleLine>
-              <span className="title">招聘条件</span>
-              <Brief>熟练缝纫工</Brief>
-            </Item>
-            <Item multipleLine>
-              <span className="title">岗位介绍</span>
-              <Brief>做二休五</Brief>
-            </Item>
-            <Item multipleLine extra={<a>1小时前</a>}>
-              报名时间
-            </Item>
-            <Item multipleLine extra={<a>已报名</a>}>
-              报名状态
-            </Item>
-          </List>
-          <Link
-            to="/enroll"
-            style={{
-              padding: 12,
-              backgroundColor: '#108ee9',
-              fontSize: 16,
-              color: '#fff',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              margin: '12px',
-            }}
-          >
-            <div className="center">
-              <EyeFilled style={{ marginRight: 4 }}></EyeFilled>
-              报名记录
-            </div>
-
-            <RightOutlined />
-          </Link>
-        </div>
-        <div style={{ backgroundColor: '#fff', padding: '12px 0px' }}>
-          <div
-            style={{
-              padding: 12,
-              backgroundColor: 'rgb(253, 144, 147)',
-              fontSize: 16,
-              color: '#fff',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              margin: '0 12px',
-            }}
-            onClick={() => {
-              setshown(!shown);
-            }}
-          >
-            申请坐车
+              申请坐车
             <RightOutlined rotate={shown ? -90 : 90} />
-          </div>
+            </div>
+          </Auth>
 
           <CSSTransition
             in={shown}
@@ -214,7 +196,12 @@ export default ({ scrolltop }) => {
                   className="diybtn"
                   style={{ flex: 1 }}
                   onClick={() => {
-                    alert(0);
+                    setsearch({
+                      ...search,
+                      type: "start",
+                      select: search.start
+                    })
+                    setvisible(true)
                   }}
                 >
                   {search.start ? search.start : '出发地'}
@@ -224,7 +211,12 @@ export default ({ scrolltop }) => {
                   className="diybtn"
                   style={{ flex: 1 }}
                   onClick={() => {
-                    alert(0);
+                    setsearch({
+                      ...search,
+                      type: "end",
+                      select: search.end
+                    })
+                    setvisible(true)
                   }}
                 >
                   {search.end ? search.end : '目的地'}
@@ -252,41 +244,87 @@ export default ({ scrolltop }) => {
                   width: '100%',
                   marginBottom: 12,
                 }}
+                onClick={() => {
+                  console.log(search);
+                  let { start, end, end_date, start_date } = search;
+                  if (!start || !end || !end_date || !start_date) {
+                    Toast.info("请先选择坐车信息...", 2, null, false)
+                    return
+                  }
+
+                  dispatch({
+                    type: 'global/train',
+                    payload: {
+                      end_station: end[0],
+                      start_station: start[0],
+                      end_date,
+                      start_date
+                    },
+                  }).then(res => {
+                    history.push("/train")
+                  });
+                }}
               >
                 查询
               </Button>
             </div>
           </CSSTransition>
+          {
+            tr?.data?.dataList ?
+              tr.data.dataList.map((it,i) => {
+                return <div key={i} style={{ margin: 12 }}>
+                  <div
+                    style={{
+                      padding: 12,
+                      backgroundColor: '#fff',
+                      fontSize: 16,
+                      borderBottom:"#f0f0f0 solid 1px"
+                    }}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      color: '#333',
+                      marginBottom:8
+                    }}>
+                      <span className='estitle'>
+                        {it.train.name}
+                      </span>
+                      <span>
+                        乘客：{it.name}
+                      </span>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      color: '#666',
+                      fontSize:14
+                    }}>
+                      <span>
+                        {it.train.start_station} <SwapRightOutlined /> {it.train.end_station}
+                      </span>
+                      <span style={{color:it.status_name=="待发车"?"#108ee9":"#999"}}>
+                        {it.status_name}
+                      </span>
+                    </div>
 
-          <div style={{ margin: 12 }}>
-            <div
-              style={{
-                padding: 12,
-                backgroundColor: '#5ad6e4',
-                fontSize: 16,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                color: '#fff',
-              }}
-            >
-              我的车票
-              <span>
-                {'江苏南通'} <SwapRightOutlined /> {'山西洪洞'}
-              </span>
-            </div>
-            <div
-              style={{
-                paddingRight: 15,
-                backgroundColor: '#fff',
-                fontSize: 16,
-                paddingTop: 12,
-              }}
-            >
-              <Item extra={'2021-01-28 15:11:00'}>出发时间</Item>
-              <Item extra={'江苏省南通市汽车东站'}>上车地点</Item>
-            </div>
-          </div>
+                  </div>
+                  <div
+                    style={{
+                      paddingRight: 15,
+                      backgroundColor: '#fff',
+                      fontSize: 16,
+                    }}
+                  >
+                    <Item extra={moment(it.train.start_time).format("YYYY-MM-DD HH:mm")}>出发时间</Item>
+                    <Item extra={it.train.start_place}>上车地点</Item>
+                  </div>
+                </div>
+              })
+              : <Empty description="暂无记录" style={{ paddingTop: 60 }}></Empty>
+          }
         </div>
       </Tabs>
     </div>

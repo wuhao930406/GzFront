@@ -165,7 +165,7 @@ class ResultList extends React.Component {
               <div className="oneline" style={{ color: '#000', fontSize: 16 }}>
                 {rowData.name}
               </div>
-              <div>
+              <div className='oneline'>
                 {rowData.keywords.map((it) => it.keyword_name).join(' / ')}
               </div>
               <div>

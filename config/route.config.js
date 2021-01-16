@@ -27,7 +27,6 @@ export default [
         title: '服务中心',
         component: '@/pages/service',
       },
-
       {
         path: '/center',
         title: '个人中心',
@@ -37,6 +36,21 @@ export default [
         path: '/enroll',
         title: '报名记录',
         component: '@/pages/center/enroll',
+      },
+      {
+        path: '/enroll',
+        title: '报名记录',
+        component: '@/pages/center/enroll',
+      },
+      {
+        path: '/train',
+        title: '选择车次',
+        component: '@/pages/center/train',
+      },
+      {
+        path: '/trainport',
+        title: '预定车次',
+        component: '@/pages/center/trainport',
       },
     ],
   },

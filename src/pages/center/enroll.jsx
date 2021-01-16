@@ -9,8 +9,9 @@ import {
 } from '@ant-design/icons';
 import IconFont from '@/components/IconFont';
 import { CSSTransition } from 'react-transition-group';
-import ResultList from '@/components/ResultList/result';
+import PublicList from '@/components/PublicList';
 import styles from './index.less';
+import { getenroll } from '@/services/factory';
 
 const { Panel } = Collapse;
 
@@ -66,5 +67,6 @@ let Header = connect(({ global, loading }) => ({
 }))(Enroll);
 
 export default (props) => {
-  return <ResultList Header={Header}></ResultList>;
+  return <PublicList post={getenroll}
+    type="getenroll" Header={Header}></PublicList>;
 };

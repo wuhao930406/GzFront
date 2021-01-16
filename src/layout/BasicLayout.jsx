@@ -1,10 +1,11 @@
-import { TabBar } from 'antd-mobile';
+import { TabBar, Modal } from 'antd-mobile';
 import { history } from 'umi';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import IconFont from '@/components/IconFont';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { KeepAliveLayout, connect } from 'umi';
 import getUserinfo from '@/utils/getUserinfo';
+import { member_card } from '@/services/factory'
 
 let Rendertopdom = ({ type, istop }) => {
   let iftop = useMemo(() => {
@@ -51,9 +52,21 @@ let BasicLayout = (props) => {
       type: 'global/classify',
       payload: { is_all: 1 },
     });
-     dispatch({
+
+    dispatch({
       type: 'global/userinfo',
-    });
+    }).then((res) => {
+      if (!res.data?.is_member) {
+        Modal.alert('您还不是会员', '是否立即注册会员?', [
+          { text: '取消', onPress: () => console.log('cancel') },
+          { text: '确定', onPress: () => {
+            member_card().then(res=>{
+              window.location.href = res.data;
+            })
+          } },
+        ])
+      }
+    })
   }, []);
 
   useEffect(() => {
@@ -63,6 +76,11 @@ let BasicLayout = (props) => {
         pageIndex: 1,
       },
     });
+    dispatch({
+      type: 'global/userinfo',
+    })
+
+
   }, [location.pathname]);
   //   scrollRef?.current?.scrollToTop();
 
@@ -155,9 +173,9 @@ let BasicLayout = (props) => {
             ref={scrollRefc}
             style={{ width: '100%', height: '100%' }}
             hideTracksWhenNotNeeded={true}
-            onScroll={(e)=>handleScroll(e)}
+            onScroll={(e) => handleScroll(e)}
           >
-            {React.cloneElement(children,{scrolltop:scrolltop}) }
+            <KeepAliveLayout {...props}>{React.cloneElement(children, { scrolltop: scrolltop })}</KeepAliveLayout>
           </Scrollbars>
         </TabBar.Item>
       </TabBar>

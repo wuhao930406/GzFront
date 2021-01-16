@@ -1,5 +1,5 @@
-import { keyword, classify, jobdetail, userinfo } from '@/services/factory';
-
+import { keyword, classify, jobdetail, userinfo,train_record } from '@/services/factory';
+let trans = localStorage.getItem("train");
 const GlobalModel = {
   namespace: 'global',
   state: {
@@ -15,6 +15,12 @@ const GlobalModel = {
       min_classify_id: '',
       max_classify_id: '',
       pageIndex: 1,
+    },
+    train: trans?JSON.parse(trans):{
+      end_station:"",
+      start_station:"",
+      end_date:"",
+      start_date:""	
     },
     keyword: [],
     classify: [],
@@ -57,7 +63,22 @@ const GlobalModel = {
       });
       return newpost;
     },
-
+    *train({ payload }, { call, put, select }) {
+      //paload 传入修改值即可
+      const lastpostData = yield select((state) => state.global.train);
+      let newpost = {
+        ...lastpostData,
+        ...payload,
+      };
+      localStorage.setItem("train",JSON.stringify(newpost))
+      yield put({
+        type: 'save',
+        payload: {
+          train: newpost,
+        },
+      });
+      return newpost;
+    },
     *keyword({ payload }, { call, put, select }) {
       let response = yield call(keyword, payload);
       yield put({
@@ -84,6 +105,10 @@ const GlobalModel = {
     },
     *jobdetail({ payload }, { call, put, select }) {
       let response = yield call(jobdetail, payload);
+      return response;
+    },
+    *train_record({ payload }, { call, put, select }) {
+      let response = yield call(train_record, payload);
       return response;
     },
   },

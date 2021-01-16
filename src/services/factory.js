@@ -44,15 +44,48 @@ export async function userinfo() {
   return request('/api/wechat/user/info');
 }
 
-//乘车记录
+//车票列表
+export async function trains(params) {
+  return request('/api/wechat/train' + bodyParse(params));
+}
+//创建乘车记录
 export async function train_record(params) {
+  return request('/api/wechat/train_record', {
+    method: 'POST',
+    data: params,
+  });
+}
+//乘车记录
+export async function getrain_record(params) {
   return request('/api/wechat/train_record' + bodyParse(params));
+
 }
 
 //报名历史
 export async function getenroll(params) {
   return request('/api/wechat/enroll' + bodyParse(params));
 }
+
+//注册会员
+export async function member_card() {
+  return request('/api/wechat/user/member_card');
+}
+
+//注册会员
+export async function stations() {
+  return request('/api/wechat/train/stations');
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //启用or禁用用户
 export async function setenable(params) {

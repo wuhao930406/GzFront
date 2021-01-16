@@ -46,5 +46,5 @@ export default defineConfig({
   ],
 
   plugins:['@alitajs/keep-alive'],
-  keepalive:['/factory','/service']
+  keepalive:['/factory','/service','/center']
 });
