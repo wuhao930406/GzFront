@@ -101,7 +101,10 @@ export async function code() {
   return request('/api/wechat/user/code');
 }
 
-
+//全部站点
+export async function promo() {
+  return request('/api/wechat/user/promo');
+}
 
 
 
