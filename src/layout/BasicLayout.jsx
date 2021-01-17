@@ -162,7 +162,6 @@ let BasicLayout = (props) => {
             <IconFont type="icon-center" style={{ fontSize: 22 }} />
           }
           selected={location.pathname === '/center'}
-          badge={1}
           onPress={() => {
             history.push('/center');
           }}

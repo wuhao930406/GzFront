@@ -164,21 +164,22 @@ let Train = (props) => {
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "flex-end",
-                      backgroundColor: "rgb(90, 214, 228)",
-                      width: "100%", padding: 12
+                      width: "100%", 
+                      padding: 12,
+                      borderBottom:"#f0f0f0 solid 1px"
                     }}>
-                      <span className='oneline' style={{ fontSize: 16, display: "block", color: "#fff" }}>{item.name}</span>
-                      <span style={{ fontSize: 16, display: "block", width: 88, textAlign: "right", color: "#fff" }} >剩余 {item.max_people - item.enroll_people}座</span>
+                      <span className='estitle' style={{ flex:1 }}>{item.name}</span>
+                      <span style={{  display: "block", width: 88, textAlign: "right",flexShrink:0}} >剩余 {item.max_people - item.enroll_people}座</span>
                     </a>
                   }
                   description={
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", padding: 12 }}>
-                      <a style={{ color: "#000" }}>
+                      <a style={{ color: "#000",flex:1}} className="oneline">
                         <span >{item.start_station}</span>
                         <SwapRightOutlined></SwapRightOutlined>
                         <span >{item.end_station}</span>
                       </a>
-                      <div style={{ textAlign: "right", color: "#666", fontSize: 14 }}>
+                      <div style={{ textAlign: "right", color: "#666", fontSize: 14,width:180,flexShrink:0 }}>
                         发车时间：{moment(item.start_time).format("YYYY-MM-DD HH:mm")}
                       </div>
                     </div>

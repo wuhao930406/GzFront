@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Collapse, Button, Tag } from 'antd';
+import { Row, Col, Collapse, Button, Spin,Skeleton } from 'antd';
 import { Carousel, Tabs, WhiteSpace, Modal } from 'antd-mobile';
-import { connect, history } from 'umi';
+import { connect, history, useRequest } from 'umi';
 import styles from './index.less';
 import {
   QrcodeOutlined,
@@ -11,6 +11,8 @@ import {
 import ResultList from '@/components/ResultList';
 import scrollAnimation from '@/utils/scrollAnimation';
 import IconFont from '@/components/IconFont';
+import { code, banner } from '@/services/factory';
+import Auth from '@/components/Auth';
 
 const { Panel } = Collapse;
 
@@ -20,16 +22,12 @@ let Header = ({
   global: { keyword, classify, params },
   dispatch,
 }) => {
-  const [data, setdata] = useState([
-      'AiyWuByWklrrUDlFignR',
-      'TekJlZRVCjLFexlOCuWn',
-      'IJOtIlfsYdTyaDTRVrLI',
-    ]),
-    [curtags, setcurtag] = useState({}),
+  const [curtags, setcurtag] = useState({}),
     [iftype, ciftype] = useState({
       title: '',
       visible: false,
       curlist: [],
+      type: ""
     });
 
   function setpostdata(val) {
@@ -38,6 +36,9 @@ let Header = ({
       payload: val,
     });
   }
+  let { data, loading } = useRequest(() => code()),
+    banners = useRequest(() => banner());
+
 
   return (
     <div>
@@ -54,53 +55,68 @@ let Header = ({
         }}
         title={iftype.title}
         footer={false}
-        style={{ width: '95%', borderRadius: 12, overflow: 'hidden' }}
+        style={{ width: iftype.type == "qrcode" ? "70%" : '95%', borderRadius: 12, overflow: 'hidden' }}
       >
         <div>
-          {iftype.curlist.map((it, i) => (
-            <a
-              className="oneline"
-              style={{
-                textAlign: 'center',
-                color: params.min_classify_id == it.id ? '#108ee9' : '#666',
-              }}
-              key={i}
-              className="tag"
-              onClick={() => {
-                ciftype({
-                  ...iftype,
-                  visible: false,
-                });
-                if (iftype.type == 'keyword') {
-                  dispatch({
-                    type: 'global/postData',
-                    payload: { name: it.name, pageIndex: 1 },
-                  }).then(() => {
-                    history.push('/search');
-                  });
-                } else {
-                  if (params.min_classify_id == it.id) {
-                    setpostdata({ min_classify_id: '', pageIndex: 1 });
-                  } else {
-                    setpostdata({ min_classify_id: it.id, pageIndex: 1 });
-                    setcurtag((curtags) => {
-                      let min_classifies = curtags.min_classifies,
-                        res = [
-                          ...min_classifies.filter((item) => item.id == it.id),
-                          ...min_classifies.filter((item) => item.id !== it.id),
-                        ];
-                      curtags.min_classifies = res;
-                      return curtags;
+          {
+            iftype.type == "qrcode" ?
+              <Spin spinning={loading}>
+                <img
+                  style={{ width: '100%' }}
+                  src={data}
+                  alt=""
+                />
+                <p>长按保存或发送给朋友</p>
+              </Spin>
+              :
+              iftype.curlist.map((it, i) => (
+                <a
+                  className="oneline"
+                  style={{
+                    textAlign: 'center',
+                    color: params.min_classify_id == it.id ? '#108ee9' : '#666',
+                  }}
+                  key={i}
+                  className="tag"
+                  onClick={() => {
+                    ciftype({
+                      ...iftype,
+                      visible: false,
                     });
-                  }
-                }
-              }}
-            >
-              {it.name}
-            </a>
-          ))}
+                    if (iftype.type == 'keyword') {
+                      dispatch({
+                        type: 'global/postData',
+                        payload: { name: it.name, pageIndex: 1 },
+                      }).then(() => {
+                        history.push('/search');
+                      });
+                    } else {
+                      if (params.min_classify_id == it.id) {
+                        setpostdata({ min_classify_id: '', pageIndex: 1 });
+                      } else {
+                        setpostdata({ min_classify_id: it.id, pageIndex: 1 });
+                        setcurtag((curtags) => {
+                          let min_classifies = curtags.min_classifies,
+                            res = [
+                              ...min_classifies.filter((item) => item.id == it.id),
+                              ...min_classifies.filter((item) => item.id !== it.id),
+                            ];
+                          curtags.min_classifies = res;
+                          return curtags;
+                        });
+                      }
+                    }
+                  }}
+                >
+                  {it.name}
+                </a>
+              ))
+
+          }
         </div>
       </Modal>
+
+
       <Row
         className={styles.header}
         style={{ backgroundColor: `rgba(16,142,233,${scrolltop / 200})` }}
@@ -118,39 +134,69 @@ let Header = ({
           </Button>
         </Col>
         <Col flex="60px" className="center">
-          <QrcodeOutlined style={{ fontSize: 36, color: '#fff' }} />
+          <Auth><QrcodeOutlined style={{ fontSize: 36, color: '#FFF' }} onClick={() => {
+            ciftype({
+              ...iftype,
+              visible: true,
+              title: <a style={{ color: "#333", textShadow: "0 2px 2px #999" }}>我的推广码</a>,
+              type: "qrcode"
+            })
+
+
+          }} /></Auth>
         </Col>
       </Row>
-      <Carousel
-        autoplay={true}
-        infinite
-        dotStyle={{
-          width: 14,
-          height: 4,
-          borderRadius: 14,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-        }}
-        dotActiveStyle={{
-          width: 14,
-          height: 4,
-          borderRadius: 14,
-          backgroundColor: 'rgba(255,255,255,0.9)',
-        }}
-      >
-        {data.map((val) => (
-          <a
-            key={val}
-            href="http://www.alipay.com"
-            style={{
-              display: 'inline-block',
-              width: '100%',
-              height: 200,
-              background: `url(https://zos.alipayobjects.com/rmsportal/${val}.png) no-repeat center`,
-              backgroundSize: 'cover',
-            }}
-          ></a>
-        ))}
-      </Carousel>
+      {
+        banners.data ? <Carousel
+          autoplay={true}
+          infinite
+          dotStyle={{
+            width: 14,
+            height: 4,
+            borderRadius: 14,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}
+          dotActiveStyle={{
+            width: 14,
+            height: 4,
+            borderRadius: 14,
+            backgroundColor: 'rgba(255,255,255,0.9)',
+          }}
+        >
+          {
+            banners.data.dataList.map((it, i) => (
+              <a
+                key={i}
+                href={it.location_type == 1 ? it.url : null}
+                style={{
+                  display: 'inline-block',
+                  width: '100%',
+                  height: 200,
+                  background: `url(${it.preview_url}) no-repeat center`,
+                  backgroundSize: 'cover',
+                }}
+                onClick={() => {
+                  if (it.query) {
+                    history.push({
+                      pathname: it.url,
+                      query: {
+                        id: it.query
+                      }
+                    })
+                  }
+
+                }}
+              ></a>
+            ))}
+        </Carousel>:
+        <Skeleton.Image style={{width:"100%"}} active={true}>
+
+        </Skeleton.Image >
+      
+    
+    
+     }
+
 
       <section style={{ marginBottom: 8 }}>
         <Collapse

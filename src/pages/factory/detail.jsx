@@ -11,7 +11,7 @@ import IconFont from '@/components/IconFont';
 import { CSSTransition } from 'react-transition-group';
 import ResultList from '@/components/ResultList/result';
 import styles from './index.less';
-import { enroll, customer } from '@/services/factory';
+import { enroll, customer,send_message } from '@/services/factory';
 import Auth from '@/components/Auth';
 
 let Detail = (props) => {
@@ -91,7 +91,12 @@ let Detail = (props) => {
               ))}
             </Carousel>
           ) : null}
-          <div className={styles.zixun}>
+          <div className={styles.zixun} onClick={()=>{
+            Modal.alert(
+              "请在公众号主页发送您的问题",
+              <img style={{width:"100%"}} src={require("@/assets/service_3.jpg")}/>
+            )
+          }}>
             <CustomerServiceOutlined />
             <span>咨询</span>
           </div>
@@ -203,6 +208,7 @@ let Detail = (props) => {
               onClick={() => {
                 enroll({ job_id: data.id }).then((res) => {
                   if (res.code == 0) {
+                    send_message({});//发消息
                     Toast.success(
                       '报名成功！可在个人中心查看报名信息',
                       3,

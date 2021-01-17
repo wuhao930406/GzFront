@@ -93,6 +93,12 @@
 .am-list-item .am-list-line .am-list-content {
   font-size: 16px !important;
 }
+.seto{
+  .am-list-content{
+    width: 100% !important;
+  }
+}
+
 .am-list-line-wrap {
   .am-list-content {
     width: 100% !important;
@@ -239,10 +245,13 @@
 
 .estitle {
   font-size: 16px;
-  color: #000;
+  color: @primary-color;
   padding-left: 12px;
   position: relative;
-
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   &::before {
     position: absolute;
     content: '';
@@ -330,7 +339,13 @@
   align-items: center;
 }
 
-
+.ant-skeleton-element{
+  width: 100% !important;
+  .ant-skeleton-image{
+    width: 100% !important;
+    height: 200px !important;
+  }
+}
 
 
 

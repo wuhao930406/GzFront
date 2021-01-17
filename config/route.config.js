@@ -38,9 +38,9 @@ export default [
         component: '@/pages/center/enroll',
       },
       {
-        path: '/enroll',
-        title: '报名记录',
-        component: '@/pages/center/enroll',
+        path: '/enrolldetail',
+        title: '报名详情',
+        component: '@/pages/center/enrolldetail',
       },
       {
         path: '/train',

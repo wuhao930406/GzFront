@@ -159,8 +159,12 @@ class PublicList extends React.Component {
             <List.Item
               style={{ padding: 12 }}
               onClick={()=>{
-                
-
+                history.push({
+                  pathname:"/enrolldetail",
+                  query:{
+                    id:rowData.id
+                  }
+                })
               }}
             >
               <List.Item.Meta

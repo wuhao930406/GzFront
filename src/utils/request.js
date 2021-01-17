@@ -3,7 +3,8 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { message, notification,Modal } from 'antd';
+import { notification } from 'antd';
+import { Carousel, Toast } from 'antd-mobile';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -37,7 +38,7 @@ const errorHandler = (error) => {
         description: errorText,
       });
     } else {
-      message.warn("账号密码错误！请重新输入");
+      Toast.fail("账号密码错误！请重新输入");
     }
 
   } else if (!response) {
@@ -47,7 +48,7 @@ const errorHandler = (error) => {
         message: '网络异常',
       });
     } else {
-      message.warn("账号密码错误！请重新输入");
+      Toast.fail("账号密码错误！请重新输入");
     }
 
   }
@@ -91,8 +92,8 @@ request.interceptors.response.use(async (response, options) => {
   }
   const data = await response.clone().json();
   // 详情返回的response处理
-  if(data.code != 0) {
-    message.warn(data.message)
+  if(data.code != 0&&response?.url.indexOf("code") ==-1 ) {
+    Toast.fail(data.message)
   }
   return response;
 });

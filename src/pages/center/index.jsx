@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Modal } from 'antd-mobile';
-import { List, Avatar } from 'antd';
+import { List, Avatar, Spin } from 'antd';
 import {
   QrcodeOutlined,
   DownSquareOutlined,
@@ -10,6 +10,7 @@ import { useState } from 'react';
 import Details from './details';
 import { connect, useRequest } from 'umi';
 import Auth from '@/components/Auth';
+import { code } from '@/services/factory';
 
 
 
@@ -19,6 +20,9 @@ let Center = (props) => {
       global: { userinfo },
     } = props;
 
+  let { data, loading } = useRequest(() => code())
+
+
   return (
     <div>
       <Modal
@@ -26,14 +30,19 @@ let Center = (props) => {
         transparent
         maskClosable={true}
         onClose={() => cv(false)}
-        title="我的二维码"
+        title={<a style={{color:"#333",textShadow:"0 2px 2px #999"}}>我的推广码</a>}
         footer={false}
+        style={{ width:"70%"}}
       >
-        <img
-          style={{ width: '100%' }}
-          src={require('@/assets/qrcode.jpg')}
-          alt=""
-        />
+        <Spin spinning={loading}>
+          <img
+            style={{ width: '100%' }}
+            src={data}
+            alt=""
+          />
+          <p>长按保存或发送给朋友</p>
+        </Spin>
+
       </Modal>
 
       <Auth>

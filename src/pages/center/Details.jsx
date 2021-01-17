@@ -25,14 +25,16 @@ const tabs = [
 ];
 
 export default (props) => {
-  const { scrolltop, dispatch } = props;
+  const { scrolltop, dispatch, global: { train } } = props;
   const [shown, setshown] = useState(false),
     [show, cshow] = useState(false),//日历
     [visible, setvisible] = useState(false),//选择出发目的地
     [search, setsearch] = useState({
-      start: null,
-      end: null,
-      time: null,
+      start: train.start_station ? [train.start_station] : null,
+      end: train.end_station ? [train.end_station] : null,
+      time: train.start_date ? moment(train.start_date).format("YYYY-MM-DD") : null,
+      start_date: train.start_date ? train.start_date : null,
+      end_date: train.end_date ? train.end_date : null,
       type: "start"
     });
   let tr = useRequest(() => getrain_record({ is_all: 1 })),
@@ -85,11 +87,21 @@ export default (props) => {
       );
   };
 
-  //console.log(tr, station);
 
   let options = station.data ? ['请选择', ...new Set([...station.data.end_stations, ...station.data.start_stations])] : ['请选择'];
 
-  //console.log(options)
+  useEffect(() => {
+    setsearch({
+      ...search,
+      start: train.start_station ? [train.start_station] : null,
+      end: train.end_station ? [train.end_station] : null,
+      time: train.start_date ? moment(train.start_date).format("YYYY-MM-DD") : null,
+      start_date: train.start_date ? train.start_date : null,
+      end_date: train.end_date ? train.end_date : null,
+    })
+  }, [train])
+
+
   return (
     <div>
       <Calendar
@@ -98,6 +110,7 @@ export default (props) => {
         onCancel={() => {
           cshow(false);
         }}
+        defaultValue={[new Date(search.time)]}
         onConfirm={(start, end) => {
           setsearch({
             ...search,
@@ -137,7 +150,6 @@ export default (props) => {
 
       <Tabs
         tabs={tabs}
-        initialPage={1}
         renderTabBar={(props) => {
           return (
             <div
@@ -255,8 +267,8 @@ export default (props) => {
                   dispatch({
                     type: 'global/train',
                     payload: {
-                      end_station: end[0],
-                      start_station: start[0],
+                      end_station: Array.isArray(end) ? end[0] : end,
+                      start_station: Array.isArray(start) ? start[0] : start,
                       end_date,
                       start_date
                     },
@@ -269,16 +281,18 @@ export default (props) => {
               </Button>
             </div>
           </CSSTransition>
+          <p style={{ margin: "12px 24px" }}>我的车票 :</p>
+
           {
             tr?.data?.dataList ?
-              tr.data.dataList.map((it,i) => {
+              tr.data.dataList.map((it, i) => {
                 return <div key={i} style={{ margin: 12 }}>
                   <div
                     style={{
                       padding: 12,
                       backgroundColor: '#fff',
                       fontSize: 16,
-                      borderBottom:"#f0f0f0 solid 1px"
+                      borderBottom: "#f0f0f0 solid 1px"
                     }}
                   >
                     <div style={{
@@ -286,13 +300,13 @@ export default (props) => {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       color: '#333',
-                      marginBottom:8
+                      marginBottom: 8
                     }}>
-                      <span className='estitle'>
+                      <span className='estitle' style={{flex:1}}>
                         {it.train.name}
                       </span>
-                      <span>
-                        乘客：{it.name}
+                      <span style={{ width:88,textAlign:"right", flexShrink:0,color: it.status_name == "待发车" ? "#108ee9" : "#999" }}>
+                        {it.status_name}
                       </span>
                     </div>
                     <div style={{
@@ -300,13 +314,13 @@ export default (props) => {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       color: '#666',
-                      fontSize:14
+                      fontSize: 14
                     }}>
-                      <span>
+                      <span className='oneline' style={{flex:1}}>
                         {it.train.start_station} <SwapRightOutlined /> {it.train.end_station}
                       </span>
-                      <span style={{color:it.status_name=="待发车"?"#108ee9":"#999"}}>
-                        {it.status_name}
+                      <span style={{width:77,textAlign:"right", flexShrink:0}}>
+                        乘客：{it.name}
                       </span>
                     </div>
 
@@ -319,11 +333,11 @@ export default (props) => {
                     }}
                   >
                     <Item extra={moment(it.train.start_time).format("YYYY-MM-DD HH:mm")}>出发时间</Item>
-                    <Item extra={it.train.start_place}>上车地点</Item>
+                    <Item extra={it.train.start_place} style={{ marginTop: -10 }}>上车地点</Item>
                   </div>
                 </div>
               })
-              : <Empty description="暂无记录" style={{ paddingTop: 60 }}></Empty>
+              : <Empty description="暂无记录" style={{ padding: "60px 0" }}></Empty>
           }
         </div>
       </Tabs>
