@@ -52,6 +52,11 @@ export default [
         title: '预定车次',
         component: '@/pages/center/trainport',
       },
+      {
+        path: '/advance',
+        title: '我的推广',
+        component: '@/pages/advance',
+      },
     ],
   },
 ];
