@@ -1,0 +1,29 @@
+.bottombar {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 19;
+    left: 0;
+    bottom: 0;
+    height: 4px;
+    width: 50%;
+    background-color: #ff9c9c;
+    transition: all 0.5s;
+  }
+}
+
+.rightbottombar {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 19;
+    left: 50% !important;
+    bottom: 0;
+    height: 4px;
+    width: 50%;
+    background-color: #9cceff;
+    transition: all 0.5s;
+  }
+}

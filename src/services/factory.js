@@ -64,7 +64,6 @@ export async function send_message(params) {
   });
 }
 
-
 //乘车记录
 export async function getrain_record(params) {
   return request('/api/wechat/train_record' + bodyParse(params));
@@ -95,7 +94,6 @@ export async function banner() {
   return request('/api/wechat/banner');
 }
 
-
 //全部站点
 export async function code() {
   return request('/api/wechat/user/code');
@@ -106,12 +104,15 @@ export async function promo() {
   return request('/api/wechat/user/promo');
 }
 
+//获取排名名次
+export async function rank() {
+  return request('/api/wechat/user/rank');
+}
 
-
-
-
-
-
+//获取排名列表
+export async function member(params) {
+  return request('/api/wechat/member' + bodyParse(params));
+}
 
 //启用or禁用用户
 export async function setenable(params) {

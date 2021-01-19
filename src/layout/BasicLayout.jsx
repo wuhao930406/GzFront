@@ -5,7 +5,9 @@ import IconFont from '@/components/IconFont';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { KeepAliveLayout, connect } from 'umi';
 import getUserinfo from '@/utils/getUserinfo';
-import { member_card } from '@/services/factory'
+import { member_card } from '@/services/factory';
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/lib/locale/zh_CN';
 
 let Rendertopdom = ({ type, istop }) => {
   let iftop = useMemo(() => {
@@ -29,12 +31,12 @@ let Rendertopdom = ({ type, istop }) => {
 
 let BasicLayout = (props) => {
   let {
-    children,
-    route,
-    location,
-    dispatch,
-    global: { istop },
-  } = props,
+      children,
+      route,
+      location,
+      dispatch,
+      global: { istop },
+    } = props,
     scrollRef = useRef(),
     scrollRefs = useRef(),
     scrollRefc = useRef();
@@ -59,14 +61,17 @@ let BasicLayout = (props) => {
       if (!res.data?.is_member) {
         Modal.alert('您还不是会员', '是否立即注册会员?', [
           { text: '取消', onPress: () => console.log('cancel') },
-          { text: '确定', onPress: () => {
-            member_card().then(res=>{
-              window.location.href = res.data;
-            })
-          } },
-        ])
+          {
+            text: '确定',
+            onPress: () => {
+              member_card().then((res) => {
+                window.location.href = res.data;
+              });
+            },
+          },
+        ]);
       }
-    })
+    });
   }, []);
 
   useEffect(() => {
@@ -78,9 +83,7 @@ let BasicLayout = (props) => {
     });
     dispatch({
       type: 'global/userinfo',
-    })
-
-
+    });
   }, [location.pathname]);
   //   scrollRef?.current?.scrollToTop();
 
@@ -89,96 +92,102 @@ let BasicLayout = (props) => {
   };
 
   return (
-    <div
-      style={{
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        maxWidth: 1000,
-        margin: '0 auto',
-        overflow: "hidden"
-      }}
-    >
-      <TabBar
-        unselectedTintColor="#949494"
-        tintColor="#108ee9"
-        barTintColor="white"
-        prerenderingSiblingsNumber={0}
-        hidden={
-          ['/factory', '/service', '/center'].indexOf(location.pathname) == -1
-        }
+    <ConfigProvider locale={zhCN}>
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          maxWidth: 1000,
+          margin: '0 auto',
+          overflow: 'hidden',
+        }}
       >
-        <TabBar.Item
-          title={<Rendertopdom istop={istop}></Rendertopdom>}
-          key="factory"
-          icon={<IconFont type="icon-factory" style={{ fontSize: 22 }} />}
-          selectedIcon={<Rendertopdom type="btn" istop={istop}></Rendertopdom>}
-          selected={location.pathname === '/factory'}
-          onPress={() => {
-            if (istop && location.pathname === '/factory') {
-              dispatch({
-                type: 'global/istop',
-                payload: '0',
-              });
-            }
-            history.push('/factory');
-          }}
-          data-seed="logId"
+        <TabBar
+          unselectedTintColor="#949494"
+          tintColor="#108ee9"
+          barTintColor="white"
+          prerenderingSiblingsNumber={0}
+          hidden={
+            ['/factory', '/service', '/center'].indexOf(location.pathname) == -1
+          }
         >
-          <KeepAliveLayout {...props}>
+          <TabBar.Item
+            title={<Rendertopdom istop={istop}></Rendertopdom>}
+            key="factory"
+            icon={<IconFont type="icon-factory" style={{ fontSize: 22 }} />}
+            selectedIcon={
+              <Rendertopdom type="btn" istop={istop}></Rendertopdom>
+            }
+            selected={location.pathname === '/factory'}
+            onPress={() => {
+              if (istop && location.pathname === '/factory') {
+                dispatch({
+                  type: 'global/istop',
+                  payload: '0',
+                });
+              }
+              history.push('/factory');
+            }}
+            data-seed="logId"
+          >
+            <KeepAliveLayout {...props}>
+              <Scrollbars
+                thumbMinSize={10}
+                autoHide
+                ref={scrollRef}
+                style={{ width: '100%', height: '100%' }}
+                hideTracksWhenNotNeeded={true}
+              >
+                {children}
+              </Scrollbars>
+            </KeepAliveLayout>
+          </TabBar.Item>
+
+          <TabBar.Item
+            title="服务中心"
+            key="service"
+            icon={<IconFont type="icon-service" style={{ fontSize: 22 }} />}
+            selectedIcon={
+              <IconFont type="icon-service" style={{ fontSize: 22 }} />
+            }
+            selected={location.pathname === '/service'}
+            onPress={() => {
+              history.push('/service');
+            }}
+          >
+            <KeepAliveLayout {...props}>{children}</KeepAliveLayout>
+          </TabBar.Item>
+
+          <TabBar.Item
+            title="个人中心"
+            key="center"
+            icon={<IconFont type="icon-center" style={{ fontSize: 22 }} />}
+            selectedIcon={
+              <IconFont type="icon-center" style={{ fontSize: 22 }} />
+            }
+            selected={location.pathname === '/center'}
+            onPress={() => {
+              history.push('/center');
+            }}
+          >
             <Scrollbars
               thumbMinSize={10}
               autoHide
-              ref={scrollRef}
+              ref={scrollRefc}
               style={{ width: '100%', height: '100%' }}
               hideTracksWhenNotNeeded={true}
+              onScroll={(e) => handleScroll(e)}
             >
-              {children}
+              <KeepAliveLayout {...props}>
+                {React.cloneElement(children, { scrolltop: scrolltop })}
+              </KeepAliveLayout>
             </Scrollbars>
-          </KeepAliveLayout>
-        </TabBar.Item>
-
-        <TabBar.Item
-          title="服务中心"
-          key="service"
-          icon={<IconFont type="icon-service" style={{ fontSize: 22 }} />}
-          selectedIcon={
-            <IconFont type="icon-service" style={{ fontSize: 22 }} />
-          }
-          selected={location.pathname === '/service'}
-          onPress={() => {
-            history.push('/service');
-          }}
-        >
-          <KeepAliveLayout {...props}>{children}</KeepAliveLayout>
-        </TabBar.Item>
-
-        <TabBar.Item
-          title="个人中心"
-          key="center"
-          icon={<IconFont type="icon-center" style={{ fontSize: 22 }} />}
-          selectedIcon={
-            <IconFont type="icon-center" style={{ fontSize: 22 }} />
-          }
-          selected={location.pathname === '/center'}
-          onPress={() => {
-            history.push('/center');
-          }}
-        >
-          <Scrollbars
-            thumbMinSize={10}
-            autoHide
-            ref={scrollRefc}
-            style={{ width: '100%', height: '100%' }}
-            hideTracksWhenNotNeeded={true}
-            onScroll={(e) => handleScroll(e)}
-          >
-            <KeepAliveLayout {...props}>{React.cloneElement(children, { scrolltop: scrolltop })}</KeepAliveLayout>
-          </Scrollbars>
-        </TabBar.Item>
-      </TabBar>
-    </div>
+          </TabBar.Item>
+        </TabBar>
+      </div>
+    </ConfigProvider>
   );
 };
 

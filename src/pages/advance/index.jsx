@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { Button, Modal } from 'antd-mobile';
-import { List, Avatar, Spin, Row, Col } from 'antd';
+import { Modal } from 'antd-mobile';
+import { Button, List, Avatar, Spin, Row, Col, Empty } from 'antd';
 import {
   QrcodeOutlined,
   DownSquareOutlined,
@@ -9,8 +9,9 @@ import {
 import { useState } from 'react';
 import { connect, useRequest } from 'umi';
 import Auth from '@/components/Auth';
-import { code, promo } from '@/services/factory';
+import { code, promo, rank, member } from '@/services/factory';
 import IconFont from '@/components/IconFont';
+import styles from './index.less';
 
 function getname(type) {
   if (type) {
@@ -34,15 +35,24 @@ let Advance = (props) => {
     } = props;
 
   let { data, loading } = useRequest(() => code()),
-    promodata = useRequest(() => promo());
+    promodata = useRequest(() => promo()),
+    memberdata = useRequest(() => member({ pageIndex: 1, promo_num: 'desc' })),
+    rankdata = useRequest(() => rank());
 
   let promolist = useMemo(() => {
-    if (promodata) {
-      return promodata.data;
-    } else {
-      return [];
-    }
-  }, [promodata]);
+      if (promodata) {
+        return promodata.data;
+      } else {
+        return [];
+      }
+    }, [promodata]),
+    memberlist = useMemo(() => {
+      if (memberdata.data) {
+        return memberdata.data.list;
+      } else {
+        return [];
+      }
+    }, [memberdata]);
 
   return (
     <div>
@@ -139,8 +149,10 @@ let Advance = (props) => {
             )}
           </div>
         </div>
-
-        <Row style={{ backgroundColor: '#fff', margin: '0px 0px 4px 0px' }}>
+        <Row
+          className={[styles.bottombar, type == 2 ? styles.rightbottombar : '']}
+          style={{ backgroundColor: '#fff', margin: '0px 0px 4px 0px' }}
+        >
           <Col
             onClick={() => {
               ctype(1);
@@ -149,11 +161,9 @@ let Advance = (props) => {
             style={{
               flexDirection: 'column',
               padding: '10px 0',
-              borderBottom:
-                type == 1 ? '#ff9c9c solid 4px' : 'transparent solid 4px',
               transition: 'all 0.4s',
             }}
-            span={8}
+            span={12}
           >
             <div className="center" style={{ height: 36 }}>
               <IconFont
@@ -162,7 +172,8 @@ let Advance = (props) => {
               ></IconFont>
             </div>
             <span style={{ color: '#333' }}>
-              我的排名 <b style={{ fontSize: 18, color: '#ff9c9c' }}>5</b>
+              我的排名{' '}
+              <b style={{ fontSize: 18, color: '#ff9c9c' }}>{rankdata?.data}</b>
             </span>
           </Col>
           <Col
@@ -173,11 +184,9 @@ let Advance = (props) => {
             style={{
               flexDirection: 'column',
               padding: '10px 0',
-              borderBottom:
-                type == 2 ? '#9cceff solid 4px' : 'transparent solid 4px',
               transition: 'all 0.4s',
             }}
-            span={8}
+            span={12}
           >
             <div className="center" style={{ height: 36 }}>
               <IconFont
@@ -186,11 +195,14 @@ let Advance = (props) => {
               ></IconFont>
             </div>
             <span style={{ color: '#333' }}>
-              发展的用户 <b style={{ fontSize: 18, color: '#9cceff' }}>5</b>
+              我推广的人员{' '}
+              <b style={{ fontSize: 18, color: '#9cceff' }}>
+                {promolist?.length}
+              </b>
             </span>
           </Col>
 
-          <Col
+          {/* <Col
             className="center"
             style={{
               flexDirection: 'column',
@@ -209,26 +221,84 @@ let Advance = (props) => {
             <span style={{ color: '#333' }}>
               全部用户 <b style={{ fontSize: 18, color: '#bb9cff' }}>5</b>
             </span>
-          </Col>
+          </Col> */}
         </Row>
       </Auth>
-      <div>
-        <List
-          itemLayout="horizontal"
-          dataSource={promolist}
-          style={{ backgroundColor: '#fff' }}
-          renderItem={(item) => (
-            <List.Item style={{ padding: '16px 24px' }}>
-              <List.Item.Meta
-                avatar={<Avatar src={item.head_image} />}
-                title={
-                  <a style={{ marginTop: 4, display: 'block' }}>{item.name}</a>
-                }
-              />
-            </List.Item>
-          )}
-        />
-      </div>
+      {userinfo.is_member ? (
+        <div>
+          <List
+            itemLayout="horizontal"
+            dataSource={type == 1 ? memberlist : promolist}
+            style={{ backgroundColor: '#fff' }}
+            renderItem={(item, i) => (
+              <List.Item style={{ padding: '16px 24px' }}>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      style={{
+                        width: type == 1 ? 48 : 32,
+                        height: type == 1 ? 48 : 32,
+                      }}
+                      src={item.head_image}
+                    />
+                  }
+                  title={
+                    <a
+                      style={{ marginTop: type == 1 ? 0 : 4, display: 'block' }}
+                    >
+                      {item.name}
+                    </a>
+                  }
+                  description={
+                    type == 1 ? (
+                      <span style={{ color: '#999' }}>
+                        推广
+                        <b
+                          style={{
+                            color: '#ff6767',
+                            fontSize: 16,
+                            padding: '0 4px',
+                          }}
+                        >
+                          {item.promo_num}
+                        </b>
+                        人
+                      </span>
+                    ) : (
+                      ''
+                    )
+                  }
+                />
+                {type == 1 && (
+                  <div>
+                    <span style={{ color: '#999' }}>
+                      第
+                      <b
+                        style={{
+                          color: '#6fb7ff',
+                          fontSize: 24,
+                          padding: '0 4px',
+                        }}
+                      >
+                        {i + 1}
+                      </b>
+                      名
+                    </span>
+                  </div>
+                )}
+              </List.Item>
+            )}
+          />
+        </div>
+      ) : (
+        <Empty description="请注册会员后查看" style={{ padding: '60px 0' }}>
+          <Auth>
+            <Button type="primary" size="large">
+              立即注册
+            </Button>
+          </Auth>
+        </Empty>
+      )}
     </div>
   );
 };
