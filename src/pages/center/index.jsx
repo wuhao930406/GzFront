@@ -54,8 +54,8 @@ let Center = (props) => {
               <Avatar
                 style={{ width: '16vw', height: '16vw' }}
                 src={
-                  userinfo.head_image
-                    ? userinfo.head_image
+                  userinfo?.head_image
+                    ? userinfo?.head_image
                     : require('@/assets/user.png')
                 }
               />
@@ -69,19 +69,19 @@ let Center = (props) => {
                   color: '#fff',
                 }}
               >
-                {userinfo.name ? userinfo.name : '三保打工网'}
+                {userinfo?.name ? userinfo?.name : '三保打工网'}
               </a>
             }
             description={
               <span
                 style={{ display: 'block', margin: '6px 0', color: '#fff' }}
               >
-                {userinfo.city ? userinfo.city : '中国'}
+                {userinfo?.city ? userinfo?.city : '中国'}
               </span>
             }
           />
           <div style={{ color: '#fff' }}>
-            {!userinfo.is_member ? (
+            {!userinfo?.is_member ? (
               '未注册'
             ) : (
               <QrcodeOutlined style={{ fontSize: 24 }} />

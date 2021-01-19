@@ -13,35 +13,62 @@ function getQueryVariable(variable) {
   return false;
 }
 
-export default function getUserinfo(props) {
-  //localStorage.clear();
+export default function getUserinfo(props, fn) {
   //localStorage.setItem('TOKEN',"og4oj6hFZ2T3E4b_vGD5_pgSRimo");//og4oj6g1PDt2eA06i4bG4VIBCGZg  og4oj6hFZ2T3E4b_vGD5_pgSRimo
   const token = localStorage.getItem('TOKEN');
   if (token && token != 'undefined') {
+    props
+      .dispatch({
+        type: 'global/token',
+        payload: token,
+      })
+      .then((res) => {
+        if (fn) {
+          fn();
+        }
+      });
     return;
   }
   const code = getQueryVariable('code');
   if (code) {
-    const _props = JSON.parse(localStorage.getItem('_props'));
+    const pathname = localStorage.getItem('pathname');
     fakeAccountLogin(code)
       .then((res) => {
         //设置token
         localStorage.setItem('TOKEN', res.data);
-        setTimeout(() => {
-          //返回跳转前打开的url
-          history.replace(_props.location.pathname);
-        }, 1000);
+        props
+          .dispatch({
+            type: 'global/token',
+            payload: res.data,
+          })
+          .then((res) => {
+            if (fn) {
+              fn();
+            }
+          });
+        history.replace(pathname);
       })
       .catch((err) => {
         if (err) {
+          history.replace(pathname);
           localStorage.removeItem('TOKEN');
-          localStorage.removeItem('_props');
-          history.replace('/');
+          localStorage.removeItem('pathname');
         }
       });
   } else {
+    let path = props?.location?.pathname,
+      topath = '';
+    if (!path) {
+      path = '';
+    } else {
+      topath = '#' + path;
+    }
+
+    let uri = 'http://www.sanbaodagong.com/wechat/index.html'; //'http://www.sanbaodagong.com/wechat/index.html';
     window.location.href =
-      'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbc658826026c1ccd&redirect_uri=http://sanbao.bbscmyk.com/wechat/index.html&response_type=code&scope=snsapi_base#wechat_redirect';
-    localStorage.setItem('_props', JSON.stringify(props));
+      'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxbc658826026c1ccd&redirect_uri=' +
+      uri +
+      '&response_type=code&scope=snsapi_base#wechat_redirect';
+    localStorage.setItem('pathname', path);
   }
 }

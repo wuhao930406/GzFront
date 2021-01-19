@@ -38,21 +38,22 @@ let Advance = (props) => {
     promodata = useRequest(() => promo()),
     memberdata = useRequest(() => member({ pageIndex: 1, promo_num: 'desc' })),
     rankdata = useRequest(() => rank());
-
-  let promolist = useMemo(() => {
-      if (promodata) {
-        return promodata.data;
-      } else {
-        return [];
-      }
-    }, [promodata]),
-    memberlist = useMemo(() => {
-      if (memberdata.data) {
-        return memberdata.data.list;
-      } else {
-        return [];
-      }
-    }, [memberdata]);
+  let promolist = [],
+    memberlist = [];
+  promolist = useMemo(() => {
+    if (promodata) {
+      return promodata.data;
+    } else {
+      return [];
+    }
+  }, [promodata]);
+  memberlist = useMemo(() => {
+    if (memberdata.data) {
+      return memberdata.data.list;
+    } else {
+      return [];
+    }
+  }, [memberdata]);
 
   return (
     <div>
@@ -92,13 +93,9 @@ let Advance = (props) => {
         >
           <Avatar
             style={{ width: '16vw', height: '16vw', marginBottom: 12 }}
-            src={
-              userinfo.head_image
-                ? userinfo.head_image
-                : require('@/assets/user.png')
-            }
+            src={userinfo ? userinfo?.head_image : require('@/assets/user.png')}
           />
-          <div className="center" style={{ alignItems: 'flex-end' }}>
+          <div className="center" style={{ alignItems: 'baseline' }}>
             <a
               style={{
                 fontSize: 22,
@@ -107,12 +104,12 @@ let Advance = (props) => {
                 color: '#fff',
               }}
             >
-              {userinfo.name ? userinfo.name : '三保打工网'}
+              {userinfo ? userinfo?.name : '三保打工网'}
             </a>
             <span
               style={{ display: 'block', margin: '0 0 0 12px', color: '#fff' }}
             >
-              {userinfo.city ? userinfo.city : '中国'}
+              {userinfo ? userinfo?.city : '中国'}
             </span>
           </div>
           <div
@@ -128,7 +125,7 @@ let Advance = (props) => {
               backgroundColor: 'rgba(255,255,255,0.05)',
             }}
           >
-            {getname(userinfo.identity)}
+            {getname(userinfo?.identity)}
           </div>
           <div
             style={{
@@ -142,7 +139,7 @@ let Advance = (props) => {
               color: '#fff',
             }}
           >
-            {!userinfo.is_member ? (
+            {userinfo?.is_member === false ? (
               '未注册'
             ) : (
               <QrcodeOutlined style={{ fontSize: 24 }} />
@@ -171,7 +168,7 @@ let Advance = (props) => {
                 style={{ fontSize: 28, color: '#ff9c9c' }}
               ></IconFont>
             </div>
-            <span style={{ color: '#333' }}>
+            <span style={{ color: '#333', textAlign: 'center' }}>
               我的排名{' '}
               <b style={{ fontSize: 18, color: '#ff9c9c' }}>{rankdata?.data}</b>
             </span>
@@ -194,7 +191,7 @@ let Advance = (props) => {
                 style={{ fontSize: 28, color: '#9cceff' }}
               ></IconFont>
             </div>
-            <span style={{ color: '#333' }}>
+            <span style={{ color: '#333', textAlign: 'center' }}>
               我推广的人员{' '}
               <b style={{ fontSize: 18, color: '#9cceff' }}>
                 {promolist?.length}
@@ -224,7 +221,7 @@ let Advance = (props) => {
           </Col> */}
         </Row>
       </Auth>
-      {userinfo.is_member ? (
+      {userinfo?.is_member ? (
         <div>
           <List
             itemLayout="horizontal"

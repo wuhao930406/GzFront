@@ -1,5 +1,11 @@
-import { keyword, classify, jobdetail, userinfo,train_record } from '@/services/factory';
-let trans = localStorage.getItem("train");
+import {
+  keyword,
+  classify,
+  jobdetail,
+  userinfo,
+  train_record,
+} from '@/services/factory';
+let trans = localStorage.getItem('train');
 const GlobalModel = {
   namespace: 'global',
   state: {
@@ -16,21 +22,30 @@ const GlobalModel = {
       max_classify_id: '',
       pageIndex: 1,
     },
-    train: trans?JSON.parse(trans):{
-      end_station:"",
-      start_station:"",
-      end_date:"",
-      start_date:""	
-    },
+    train: trans
+      ? JSON.parse(trans)
+      : {
+          end_station: '',
+          start_station: '',
+          end_date: '',
+          start_date: '',
+        },
     keyword: [],
     classify: [],
     userinfo: {},
+    token: null,
   },
   effects: {
     *istop({ payload }, { call, put, select }) {
       yield put({
         type: 'save',
         payload: { istop: payload },
+      });
+    },
+    *token({ payload }, { call, put, select }) {
+      yield put({
+        type: 'save',
+        payload: { token: payload },
       });
     },
     *postData({ payload }, { call, put, select }) {
@@ -70,7 +85,7 @@ const GlobalModel = {
         ...lastpostData,
         ...payload,
       };
-      localStorage.setItem("train",JSON.stringify(newpost))
+      localStorage.setItem('train', JSON.stringify(newpost));
       yield put({
         type: 'save',
         payload: {
@@ -99,7 +114,7 @@ const GlobalModel = {
       let response = yield call(userinfo, payload);
       yield put({
         type: 'save',
-        payload: { userinfo: response?.data},
+        payload: { userinfo: response?.data },
       });
       return response;
     },
