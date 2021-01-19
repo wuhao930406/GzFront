@@ -25,6 +25,9 @@ class ResultList extends React.Component {
   //获取一段分页数据
   getsectiondata(params) {
     job(params).then((res) => {
+      if (!res.data) {
+        return;
+      }
       let dataArr = this.state.dataArr.concat(res.data.list);
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(dataArr),
@@ -165,7 +168,7 @@ class ResultList extends React.Component {
               <div className="oneline" style={{ color: '#000', fontSize: 16 }}>
                 {rowData.name}
               </div>
-              <div className='oneline'>
+              <div className="oneline">
                 {rowData.keywords.map((it) => it.keyword_name).join(' / ')}
               </div>
               <div>

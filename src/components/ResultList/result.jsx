@@ -25,6 +25,9 @@ class ResultList extends React.Component {
   //获取一段分页数据
   getsectiondata(params) {
     job(params).then((res) => {
+      if (!res.data) {
+        return;
+      }
       let dataArr = this.state.dataArr.concat(res.data.list);
       this.setState({
         dataSource: this.state.dataSource.cloneWithRows(dataArr),
@@ -106,7 +109,7 @@ class ResultList extends React.Component {
         },
         () => {
           this.getsectiondata(np.global.postData);
-        }
+        },
       );
     }
   }

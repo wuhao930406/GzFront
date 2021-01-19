@@ -98,7 +98,9 @@ const GlobalModel = {
       let response = yield call(keyword, payload);
       yield put({
         type: 'save',
-        payload: { keyword: response?.data?.dataList },
+        payload: {
+          keyword: response?.data?.dataList ? response?.data?.dataList : [],
+        },
       });
       return response;
     },
@@ -106,7 +108,9 @@ const GlobalModel = {
       let response = yield call(classify, payload);
       yield put({
         type: 'save',
-        payload: { classify: response?.data?.dataList },
+        payload: {
+          classify: response?.data?.dataList ? response?.data?.dataList : [],
+        },
       });
       return response;
     },

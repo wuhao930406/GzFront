@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Collapse, Button, Spin,Skeleton } from 'antd';
+import { Row, Col, Collapse, Button, Spin, Skeleton } from 'antd';
 import { Carousel, Tabs, WhiteSpace, Modal } from 'antd-mobile';
 import { connect, history, useRequest } from 'umi';
 import styles from './index.less';
@@ -27,7 +27,7 @@ let Header = ({
       title: '',
       visible: false,
       curlist: [],
-      type: ""
+      type: '',
     });
 
   function setpostdata(val) {
@@ -38,7 +38,6 @@ let Header = ({
   }
   let { data, loading } = useRequest(() => code()),
     banners = useRequest(() => banner());
-
 
   return (
     <div>
@@ -55,68 +54,68 @@ let Header = ({
         }}
         title={iftype.title}
         footer={false}
-        style={{ width: iftype.type == "qrcode" ? "70%" : '95%', borderRadius: 12, overflow: 'hidden' }}
+        style={{
+          width: iftype.type == 'qrcode' ? '70%' : '95%',
+          borderRadius: 12,
+          overflow: 'hidden',
+        }}
       >
         <div>
-          {
-            iftype.type == "qrcode" ?
-              <Spin spinning={loading}>
-                <img
-                  style={{ width: '100%' }}
-                  src={data}
-                  alt=""
-                />
-                <p>长按保存或发送给朋友</p>
-              </Spin>
-              :
-              iftype.curlist.map((it, i) => (
-                <a
-                  className="oneline"
-                  style={{
-                    textAlign: 'center',
-                    color: params.min_classify_id == it.id ? '#108ee9' : '#666',
-                  }}
-                  key={i}
-                  className="tag"
-                  onClick={() => {
-                    ciftype({
-                      ...iftype,
-                      visible: false,
+          {iftype.type == 'qrcode' ? (
+            <Spin spinning={loading}>
+              <img style={{ width: '100%' }} src={data} alt="" />
+              <p>长按保存或发送给朋友</p>
+            </Spin>
+          ) : (
+            iftype.curlist.map((it, i) => (
+              <a
+                className="oneline"
+                style={{
+                  textAlign: 'center',
+                  color: params.min_classify_id == it.id ? '#108ee9' : '#666',
+                }}
+                key={i}
+                className="tag"
+                onClick={() => {
+                  ciftype({
+                    ...iftype,
+                    visible: false,
+                  });
+                  if (iftype.type == 'keyword') {
+                    dispatch({
+                      type: 'global/postData',
+                      payload: { name: it.name, pageIndex: 1 },
+                    }).then(() => {
+                      history.push('/search');
                     });
-                    if (iftype.type == 'keyword') {
-                      dispatch({
-                        type: 'global/postData',
-                        payload: { name: it.name, pageIndex: 1 },
-                      }).then(() => {
-                        history.push('/search');
-                      });
+                  } else {
+                    if (params.min_classify_id == it.id) {
+                      setpostdata({ min_classify_id: '', pageIndex: 1 });
                     } else {
-                      if (params.min_classify_id == it.id) {
-                        setpostdata({ min_classify_id: '', pageIndex: 1 });
-                      } else {
-                        setpostdata({ min_classify_id: it.id, pageIndex: 1 });
-                        setcurtag((curtags) => {
-                          let min_classifies = curtags.min_classifies,
-                            res = [
-                              ...min_classifies.filter((item) => item.id == it.id),
-                              ...min_classifies.filter((item) => item.id !== it.id),
-                            ];
-                          curtags.min_classifies = res;
-                          return curtags;
-                        });
-                      }
+                      setpostdata({ min_classify_id: it.id, pageIndex: 1 });
+                      setcurtag((curtags) => {
+                        let min_classifies = curtags.min_classifies,
+                          res = [
+                            ...min_classifies.filter(
+                              (item) => item.id == it.id,
+                            ),
+                            ...min_classifies.filter(
+                              (item) => item.id !== it.id,
+                            ),
+                          ];
+                        curtags.min_classifies = res;
+                        return curtags;
+                      });
                     }
-                  }}
-                >
-                  {it.name}
-                </a>
-              ))
-
-          }
+                  }
+                }}
+              >
+                {it.name}
+              </a>
+            ))
+          )}
         </div>
       </Modal>
-
-
       <Row
         className={styles.header}
         style={{ backgroundColor: `rgba(16,142,233,${scrolltop / 200})` }}
@@ -134,20 +133,27 @@ let Header = ({
           </Button>
         </Col>
         <Col flex="60px" className="center">
-          <Auth><QrcodeOutlined style={{ fontSize: 36, color: '#FFF' }} onClick={() => {
-            ciftype({
-              ...iftype,
-              visible: true,
-              title: <a style={{ color: "#333", textShadow: "0 2px 2px #999" }}>我的推广码</a>,
-              type: "qrcode"
-            })
-
-
-          }} /></Auth>
+          <Auth>
+            <QrcodeOutlined
+              style={{ fontSize: 36, color: '#FFF' }}
+              onClick={() => {
+                ciftype({
+                  ...iftype,
+                  visible: true,
+                  title: (
+                    <a style={{ color: '#333', textShadow: '0 2px 2px #999' }}>
+                      我的推广码
+                    </a>
+                  ),
+                  type: 'qrcode',
+                });
+              }}
+            />
+          </Auth>
         </Col>
       </Row>
-      {
-        banners.data ? <Carousel
+      {banners.data ? (
+        <Carousel
           autoplay={true}
           infinite
           dotStyle={{
@@ -162,41 +168,42 @@ let Header = ({
             borderRadius: 14,
             backgroundColor: 'rgba(255,255,255,0.9)',
           }}
+          dots={banners.data.length > 1}
         >
-          {
-            banners.data.dataList.map((it, i) => (
-              <a
-                key={i}
-                href={it.location_type == 1 ? it.url : null}
-                style={{
-                  display: 'inline-block',
-                  width: '100%',
-                  height: 200,
-                  background: `url(${it.preview_url}) no-repeat center`,
-                  backgroundSize: 'cover',
-                }}
-                onClick={() => {
-                  if (it.query) {
-                    history.push({
-                      pathname: it.url,
-                      query: {
-                        id: it.query
-                      }
-                    })
-                  }
-
-                }}
-              ></a>
-            ))}
-        </Carousel>:
-        <Skeleton.Image style={{width:"100%"}} active={true}>
-
-        </Skeleton.Image >
-      
-    
-    
-     }
-
+          {banners.data.dataList.map((it, i) => (
+            <a
+              key={i}
+              href={it.location_type == 1 ? it.url : null}
+              style={{
+                display: 'inline-block',
+                width: '100%',
+                height: 200,
+                background: `url(${it.preview_url}) no-repeat center`,
+                backgroundSize: 'cover',
+              }}
+              onClick={() => {
+                if (it.query) {
+                  history.push({
+                    pathname: it.url,
+                    query: {
+                      id: it.query,
+                    },
+                  });
+                }
+              }}
+            >
+              <span
+                style={{ display: 'block', width: '100%', height: 200 }}
+              ></span>
+            </a>
+          ))}
+        </Carousel>
+      ) : (
+        <Skeleton.Image
+          style={{ width: '100%' }}
+          active={true}
+        ></Skeleton.Image>
+      )}
 
       <section style={{ marginBottom: 8 }}>
         <Collapse

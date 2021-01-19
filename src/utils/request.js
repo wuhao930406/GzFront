@@ -32,28 +32,26 @@ const errorHandler = (error) => {
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
-    if (response?.url.indexOf("api/user_token") == -1) {
+    if (response?.url.indexOf('api/user_token') == -1) {
       notification.error({
         message: `请求错误 ${status}: ${url}`,
         description: errorText,
       });
     } else {
-      Toast.fail("账号密码错误！请重新输入");
+      Toast.fail('账号密码错误！请重新输入');
     }
-
   } else if (!response) {
-    if (response?.url.indexOf("api/user_token") == -1) {
+    if (response?.url.indexOf('api/user_token') == -1) {
       notification.error({
         description: '您的网络发生异常，无法连接服务器',
         message: '网络异常',
       });
     } else {
-      Toast.fail("账号密码错误！请重新输入");
+      Toast.fail('账号密码错误！请重新输入');
     }
-
   }
 
-  return response?response:{};
+  return response ? response : {};
 };
 /**
  * 配置request请求时的默认参数
@@ -65,40 +63,33 @@ const request = extend({
   credentials: 'include', // 默认请求是否带上cookie
 });
 
-
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use(async (url, options) => {
-  let token = localStorage.getItem("TOKEN");
-  console.log(token)
+  let token = localStorage.getItem('TOKEN');
   if (token) {
     const headers = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': token
+      Accept: 'application/json',
+      Authorization: token,
     };
-    return (
-      {
-        url: url,
-        options: { ...options, headers: headers },
-      }
-    );
+    return {
+      url: url,
+      options: { ...options, headers: headers },
+    };
   }
-})
+});
 
 // response拦截器, 处理response
 request.interceptors.response.use(async (response, options) => {
-  if(response?.url.indexOf("api/user_token") != -1){
-    return response
+  if (response?.url.indexOf('api/user_token') != -1) {
+    return response;
   }
   const data = await response.clone().json();
   // 详情返回的response处理
-  if(data.code != 0&&response?.url.indexOf("code") ==-1 ) {
-    Toast.fail(data.message)
+  if (data.code != 0 && response?.url.indexOf('code') == -1) {
+    Toast.fail(data.message);
   }
   return response;
 });
-
-
-
 
 export default request;

@@ -11,33 +11,41 @@ import IconFont from '@/components/IconFont';
 import { CSSTransition } from 'react-transition-group';
 import ResultList from '@/components/ResultList/result';
 import styles from './index.less';
-import { enroll, customer,send_message } from '@/services/factory';
+import { enroll, customer, send_message } from '@/services/factory';
 import Auth from '@/components/Auth';
 
 let Detail = (props) => {
   let {
-    location: { query },
-    dispatch,
-    loading
-  } = props,
+      location: { query },
+      dispatch,
+      loading,
+    } = props,
     [data, setdata] = useState({}),
     [customers, setcustomers] = useState([]),
     [visible, cv] = useState(false);
 
-  useEffect(() => {
+  function reload() {
     dispatch({
       type: 'global/jobdetail',
       payload: query.id,
     }).then((res) => {
       setdata(res.data);
     });
-    customer({ is_all: 1 }).then(res => {
-      setcustomers(res.data.dataList)
-    })
+  }
+
+  useEffect(() => {
+    reload();
+    customer({ is_all: 1 }).then((res) => {
+      setcustomers(res.data.dataList);
+    });
   }, [query.id]);
 
   return (
-    <Skeleton paragraph={{rows:20}} active loading={loading.effects['global/jobdetail']}>
+    <Skeleton
+      paragraph={{ rows: 20 }}
+      active
+      loading={loading.effects['global/jobdetail']}
+    >
       <div className={styles.detail}>
         <Button
           style={{
@@ -91,12 +99,18 @@ let Detail = (props) => {
               ))}
             </Carousel>
           ) : null}
-          <div className={styles.zixun} onClick={()=>{
-            Modal.alert(
-              "请在公众号主页发送您的问题",
-              <img style={{width:"100%"}} src={require("@/assets/service_3.jpg")}/>
-            )
-          }}>
+          <div
+            className={styles.zixun}
+            onClick={() => {
+              Modal.alert(
+                '请在公众号主页发送您的问题',
+                <img
+                  style={{ width: '100%' }}
+                  src={require('@/assets/service_3.jpg')}
+                />,
+              );
+            }}
+          >
             <CustomerServiceOutlined />
             <span>咨询</span>
           </div>
@@ -119,7 +133,7 @@ let Detail = (props) => {
           </p>
           <p>
             补贴
-          <span
+            <span
               style={{
                 color: data.subsidy ? '#f76b1c' : '#999',
                 paddingLeft: 12,
@@ -130,28 +144,28 @@ let Detail = (props) => {
           </p>
           <p>
             月薪
-          <span style={{ color: '#f76b1c', paddingLeft: 12 }}>
+            <span style={{ color: '#f76b1c', paddingLeft: 12 }}>
               <b style={{ fontSize: 22 }}>
                 {data.min_month_salary + '~' + data.max_month_salary}
               </b>{' '}
-            元/月
-          </span>
+              元/月
+            </span>
           </p>
           <p>
             时薪
-          <span style={{ color: '#f76b1c', paddingLeft: 12 }}>
+            <span style={{ color: '#f76b1c', paddingLeft: 12 }}>
               <b style={{ fontSize: 22 }}>{data.hour_salary}</b> 元/小时
-          </span>
+            </span>
           </p>
           <p>
             分类
-          <span style={{ color: '#333', paddingLeft: 12 }}>
+            <span style={{ color: '#333', paddingLeft: 12 }}>
               {data.min_classify_name}
             </span>
           </p>
           <p>
             地址
-          <span style={{ color: '#333', paddingLeft: 12 }}>
+            <span style={{ color: '#333', paddingLeft: 12 }}>
               {data?.factory?.address}
             </span>
           </p>
@@ -189,33 +203,39 @@ let Detail = (props) => {
 
         <div style={{ height: 54, backgroundColor: '#f0f0f0' }}></div>
         <div className={styles.footer}>
-          <a className={styles.btn} size="large" onClick={() => {
-            cv(true)
-          }}>
+          <a
+            className={styles.btn}
+            size="large"
+            onClick={() => {
+              cv(true);
+            }}
+          >
             <PhoneOutlined style={{ marginRight: 6 }} rotate={90} />
-          联系客服
-        </a>
-          <Auth className={styles.btn} style={{
-            backgroundColor: data.is_can_enroll
-              ? 'rgba(253, 159, 45,1)'
-              : '#999',
-
-          }}>
+            联系客服
+          </a>
+          <Auth
+            className={styles.btn}
+            style={{
+              backgroundColor: data.is_can_enroll
+                ? 'rgba(253, 159, 45,1)'
+                : '#999',
+            }}
+          >
             <a
               disabled={!data.is_can_enroll}
               size="large"
-              style={{ color: "#fff" }}
+              style={{ color: '#fff' }}
               onClick={() => {
                 enroll({ job_id: data.id }).then((res) => {
                   if (res.code == 0) {
-                    send_message({});//发消息
+                    send_message({}); //发消息
                     Toast.success(
                       '报名成功！可在个人中心查看报名信息',
                       3,
                       () => {
                         reload();
                       },
-                      false,
+                      true,
                     );
                   }
                 });
@@ -224,7 +244,6 @@ let Detail = (props) => {
               {!data.is_can_enroll ? '您已报名' : '立即报名'}
             </a>
           </Auth>
-
         </div>
 
         <Modal
@@ -232,15 +251,20 @@ let Detail = (props) => {
           transparent
           maskClosable={true}
           onClose={() => {
-            cv(false)
+            cv(false);
           }}
           title="客服列表"
           footer={false}
         >
-          <div style={{ maxHeight: "40vh", overflow: 'scroll' }}>
-            {
-              customers.map((item, i) => {
-                return <a key={i} className="kefuitem" href={`tel:${item.tel}`} style={{ padding: "12px" }}>
+          <div style={{ maxHeight: '40vh', overflow: 'scroll' }}>
+            {customers.map((item, i) => {
+              return (
+                <a
+                  key={i}
+                  className="kefuitem"
+                  href={`tel:${item.tel}`}
+                  style={{ padding: '12px' }}
+                >
                   <div className="center">
                     <Avatar
                       size="large"
@@ -251,7 +275,9 @@ let Detail = (props) => {
                         justifyContent: 'center',
                         alignItems: 'center',
                       }}
-                      icon={<CustomerServiceOutlined style={{ fontSize: 16 }} />}
+                      icon={
+                        <CustomerServiceOutlined style={{ fontSize: 16 }} />
+                      }
                     ></Avatar>
                     <span style={{ fontSize: 16 }}>{item.name}</span>
                   </div>
@@ -262,9 +288,8 @@ let Detail = (props) => {
                     </i>
                   </span>
                 </a>
-
-              })
-            }
+              );
+            })}
           </div>
         </Modal>
       </div>
