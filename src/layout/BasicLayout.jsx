@@ -22,7 +22,7 @@ let Rendertopdom = ({ type, istop }) => {
     }
   } else {
     if (type == 'btn') {
-      return <IconFont type="icon-factory" style={{ fontSize: 22 }} />;
+      return <IconFont type="icon-pack" style={{ fontSize: 22 }} />;
     } else {
       return '找工作';
     }
@@ -112,14 +112,15 @@ let BasicLayout = (props) => {
             barTintColor="white"
             prerenderingSiblingsNumber={0}
             hidden={
-              ['/factory', '/service', '/center'].indexOf(location.pathname) ==
-              -1
+              ['/factory', '/service', '/center', '/city'].indexOf(
+                location.pathname,
+              ) == -1
             }
           >
             <TabBar.Item
               title={<Rendertopdom istop={istop}></Rendertopdom>}
               key="factory"
-              icon={<IconFont type="icon-factory" style={{ fontSize: 22 }} />}
+              icon={<IconFont type="icon-pack" style={{ fontSize: 22 }} />}
               selectedIcon={
                 <Rendertopdom type="btn" istop={istop}></Rendertopdom>
               }
@@ -149,7 +150,22 @@ let BasicLayout = (props) => {
             </TabBar.Item>
 
             <TabBar.Item
-              title="服务中心"
+              title="两城宜家"
+              key="city"
+              icon={<IconFont type="icon-factory" style={{ fontSize: 22 }} />}
+              selectedIcon={
+                <IconFont type="icon-factory" style={{ fontSize: 22 }} />
+              }
+              selected={location.pathname === '/city'}
+              onPress={() => {
+                history.push('/city');
+              }}
+            >
+              <KeepAliveLayout {...props}>{children}</KeepAliveLayout>
+            </TabBar.Item>
+
+            <TabBar.Item
+              title="服务大厅"
               key="service"
               icon={<IconFont type="icon-service" style={{ fontSize: 22 }} />}
               selectedIcon={

@@ -65,7 +65,7 @@ const request = extend({
 
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use(async (url, options) => {
-  let token = localStorage.getItem('TOKEN');
+  let token = localStorage.getItem('TOKENS');
   if (token) {
     const headers = {
       'Content-Type': 'application/json',

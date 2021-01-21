@@ -14,8 +14,8 @@ function getQueryVariable(variable) {
 }
 
 export default function getUserinfo(props, fn) {
-  //localStorage.setItem('TOKEN',"og4oj6hFZ2T3E4b_vGD5_pgSRimo");//og4oj6g1PDt2eA06i4bG4VIBCGZg  og4oj6hFZ2T3E4b_vGD5_pgSRimo
-  const token = localStorage.getItem('TOKEN');
+  //localStorage.setItem('TOKENS',"og4oj6hFZ2T3E4b_vGD5_pgSRimo");//og4oj6g1PDt2eA06i4bG4VIBCGZg  og4oj6hFZ2T3E4b_vGD5_pgSRimo
+  const token = localStorage.getItem('TOKENS');
   if (token && token != 'undefined') {
     props
       .dispatch({
@@ -35,7 +35,7 @@ export default function getUserinfo(props, fn) {
     fakeAccountLogin(code)
       .then((res) => {
         //设置token
-        localStorage.setItem('TOKEN', res.data);
+        localStorage.setItem('TOKENS', res.data);
         props
           .dispatch({
             type: 'global/token',
@@ -51,7 +51,7 @@ export default function getUserinfo(props, fn) {
       .catch((err) => {
         if (err) {
           history.replace(pathname);
-          localStorage.removeItem('TOKEN');
+          localStorage.removeItem('TOKENS');
           localStorage.removeItem('pathname');
         }
       });

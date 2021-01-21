@@ -19,6 +19,7 @@ let Detail = (props) => {
       location: { query },
       dispatch,
       loading,
+      global: { userinfo },
     } = props,
     [data, setdata] = useState({}),
     [customers, setcustomers] = useState([]),
@@ -39,6 +40,8 @@ let Detail = (props) => {
       setcustomers(res.data.dataList);
     });
   }, [query.id]);
+
+  console.log(userinfo);
 
   return (
     <Skeleton

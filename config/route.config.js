@@ -28,6 +28,16 @@ export default [
         component: '@/pages/service',
       },
       {
+        path: '/city',
+        title: '两城宜家',
+        component: '@/pages/city',
+      },
+      {
+        path: '/bus',
+        title: '两城一家',
+        component: '@/pages/city/bus',
+      },
+      {
         path: '/center',
         title: '个人中心',
         component: '@/pages/center',
