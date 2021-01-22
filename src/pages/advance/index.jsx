@@ -236,14 +236,14 @@ let Advance = (props) => {
                         width: type == 1 ? 48 : 32,
                         height: type == 1 ? 48 : 32,
                       }}
-                      src={item.head_image}
+                      src={item?.head_image}
                     />
                   }
                   title={
                     <a
                       style={{ marginTop: type == 1 ? 0 : 4, display: 'block' }}
                     >
-                      {item.name}
+                      {item?.name}
                     </a>
                   }
                   description={
@@ -257,7 +257,7 @@ let Advance = (props) => {
                             padding: '0 4px',
                           }}
                         >
-                          {item.promo_num}
+                          {item?.promo_num}
                         </b>
                         人
                       </span>

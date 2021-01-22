@@ -97,10 +97,10 @@ let Header = ({
                         let min_classifies = curtags.min_classifies,
                           res = [
                             ...min_classifies.filter(
-                              (item) => item.id == it.id,
+                              (item) => item?.id == it.id,
                             ),
                             ...min_classifies.filter(
-                              (item) => item.id !== it.id,
+                              (item) => item?.id !== it.id,
                             ),
                           ];
                         curtags.min_classifies = res;
@@ -117,7 +117,7 @@ let Header = ({
         </div>
       </Modal>
       <Row
-        className={styles.header}
+        className={[styles.header, 'ifixed']}
         style={{ backgroundColor: `rgba(16,142,233,${scrolltop / 200})` }}
       >
         <Col flex="auto">

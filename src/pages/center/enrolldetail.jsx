@@ -64,7 +64,7 @@ export default ({ scrolltop, location: { query } }) => {
           }}
         >
           <List className="my-list" style={{ paddingRight: 15, width: '100%' }}>
-            <Item extra={item?.job.name}>岗位</Item>
+            <Item extra={item?.job?.name}>岗位</Item>
             <Item extra={item?.factory.name}>工厂名称</Item>
             <Item extra={item?.factory.address}>工厂地址</Item>
             <Item
@@ -80,9 +80,9 @@ export default ({ scrolltop, location: { query } }) => {
               extra={
                 <span style={{ color: 'rgb(247, 107, 28)' }}>
                   <b style={{ fontSize: 18 }}>
-                    {item?.job.min_month_salary +
+                    {item?.job?.min_month_salary +
                       ' - ' +
-                      item?.job.max_month_salary}{' '}
+                      item?.job?.max_month_salary}{' '}
                   </b>
                   元
                 </span>
@@ -93,13 +93,13 @@ export default ({ scrolltop, location: { query } }) => {
             <Item
               extra={
                 <span style={{ color: 'rgb(247, 107, 28)' }}>
-                  <b style={{ fontSize: 18 }}>{item?.job.hour_salary} </b>元
+                  <b style={{ fontSize: 18 }}>{item?.job?.hour_salary} </b>元
                 </span>
               }
             >
               时薪
             </Item>
-            <Item extra={item?.job.subsidy}>补贴</Item>
+            <Item extra={item?.job?.subsidy}>补贴</Item>
             <Item
               multipleLine
               extra={
@@ -114,19 +114,19 @@ export default ({ scrolltop, location: { query } }) => {
             <Item multipleLine wrap className="seto">
               <span className="title">福利</span>
               <Brief style={{ whiteSpace: 'pre-wrap' }}>
-                {item?.job.welfare}
+                {item?.job?.welfare}
               </Brief>
             </Item>
             <Item multipleLine className="seto">
               <span className="title">招聘条件</span>
               <Brief style={{ whiteSpace: 'pre-wrap' }}>
-                {item?.job.condition}
+                {item?.job?.condition}
               </Brief>
             </Item>
             <Item multipleLine className="seto">
               <span className="title">岗位介绍</span>
               <Brief style={{ whiteSpace: 'pre-wrap' }}>
-                {item?.job.job_description}
+                {item?.job?.job_description}
               </Brief>
             </Item>
             <Item multipleLine className="seto">

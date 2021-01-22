@@ -15,8 +15,9 @@ class ResultList extends React.Component {
     this.state = {
       dataSource,
       isLoading: true,
-      scrolltop: 0,
+      scrolltop: 1,
       refreshing: false,
+      draged: false,
       isEmpty: false,
       dataArr: [],
     };
@@ -52,6 +53,7 @@ class ResultList extends React.Component {
     this.setState(
       {
         refreshing: true,
+        draged: true,
         isLoading: true,
         hasMore: true,
         dataArr: [],
@@ -216,6 +218,7 @@ class ResultList extends React.Component {
         dataSource,
         isLoading,
         refreshing,
+        draged,
         hasMore,
         isEmpty,
       } = this.state;
@@ -237,7 +240,7 @@ class ResultList extends React.Component {
         style={{
           overflow: 'auto',
         }}
-        className={scrolltop > 0 ? 'notrans' : 'trans'}
+        className={scrolltop > 0 ? 'notrans' : draged ? 'trans' : 'notrans'}
         pageSize={10}
         onScroll={(e) => {
           this.setState({

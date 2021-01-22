@@ -41,55 +41,52 @@ let Search = (props) => {
 
   return (
     <div className={styles.search}>
-      <div
-        className="center"
-        style={{
-          backgroundColor: '#fff',
-          position: 'fixed',
-          backgroundColor: '#fff',
-          zIndex: 99999999,
-          width: '100%',
-        }}
+      <Row
+        className={[styles.header, 'ifixed']}
+        style={{ padding: 0, backgroundColor: '#fff' }}
       >
-        <div
+        <Col
+          flex="30px"
           className="center"
-          style={{ width: 30, height: 54, justifyContent: 'flex-end' }}
+          style={{ justifyContent: 'flex-end' }}
           onClick={() => {
             history.go(-1);
           }}
         >
           <LeftOutlined style={{ fontSize: 24, color: '#000' }}></LeftOutlined>
-        </div>
-        <SearchBar
-          style={{ flex: 1 }}
-          placeholder="搜索企业名称或关键字"
-          ref={searchref}
-          cancelText={<span style={{ color: '#000' }}>搜索</span>}
-          value={postData.name}
-          onChange={(val) => {
-            let value = val; //&& val.replace(/\s*/g, '');
-            if (value) {
-              changepostdata({ name: value });
-            } else {
-              changepostdata({ name: '' });
-            }
-          }}
-          onCancel={(val) => {
-            let value = val; //&& val.replace(/\s*/g, '');
-            setpostdata(value);
-            if (value) {
-              changepostdata({ name: value });
-              let newarr = new Set([...searchistory, value]);
-              localStorage.setItem('SH', JSON.stringify([...newarr]));
-              changehis([...newarr]);
-            } else {
-              //Toast.info('请输入文字搜索....');
-              changepostdata({ name: '' });
-            }
-          }}
-        />
-      </div>
-      <div style={{ height: 54 }}></div>
+        </Col>
+        <Col flex="auto">
+          <SearchBar
+            style={{ width: '100%' }}
+            placeholder="搜索企业名称或关键字"
+            ref={searchref}
+            cancelText={<span style={{ color: '#000' }}>搜索</span>}
+            value={postData.name}
+            onChange={(val) => {
+              let value = val; //&& val.replace(/\s*/g, '');
+              if (value) {
+                changepostdata({ name: value });
+              } else {
+                changepostdata({ name: '' });
+              }
+            }}
+            onCancel={(val) => {
+              let value = val; //&& val.replace(/\s*/g, '');
+              setpostdata(value);
+              if (value) {
+                changepostdata({ name: value });
+                let newarr = new Set([...searchistory, value]);
+                localStorage.setItem('SH', JSON.stringify([...newarr]));
+                changehis([...newarr]);
+              } else {
+                //Toast.info('请输入文字搜索....');
+                changepostdata({ name: '' });
+              }
+            }}
+          />
+        </Col>
+      </Row>
+      <div style={{ height: 55 }}></div>
       <CSSTransition
         in={searchistory.length > 0 && !postData.name}
         timeout={300}

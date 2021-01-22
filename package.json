@@ -23,6 +23,7 @@
     "@alitajs/keep-alive": "^2.6.16",
     "@ant-design/pro-layout": "^6.5.0",
     "@umijs/preset-react": "1.x",
+    "antd-mobile": "^2.3.4",
     "moment": "^2.29.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-sticky": "^6.0.3",

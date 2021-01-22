@@ -194,7 +194,7 @@ class PublicList extends React.Component {
             title={
               <a style={{ fontSize: 16, color: '#000', display: 'flex' }}>
                 <span className="oneline" style={{ flex: 1, display: 'block' }}>
-                  {rowData.job.name}
+                  {rowData.job?.name}
                 </span>
                 <b
                   style={{
@@ -208,7 +208,7 @@ class PublicList extends React.Component {
                     textAlign: 'right',
                   }}
                 >
-                  {rowData.job.hour_salary}
+                  {rowData.job?.hour_salary}
                   <span style={{ fontSize: 14 }}>元/小时</span>
                 </b>
               </a>

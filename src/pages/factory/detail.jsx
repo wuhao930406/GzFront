@@ -265,7 +265,7 @@ let Detail = (props) => {
                 <a
                   key={i}
                   className="kefuitem"
-                  href={`tel:${item.tel}`}
+                  href={`tel:${item?.tel}`}
                   style={{ padding: '12px' }}
                 >
                   <div className="center">
@@ -282,12 +282,12 @@ let Detail = (props) => {
                         <CustomerServiceOutlined style={{ fontSize: 16 }} />
                       }
                     ></Avatar>
-                    <span style={{ fontSize: 16 }}>{item.name}</span>
+                    <span style={{ fontSize: 16 }}>{item?.name}</span>
                   </div>
                   <span>
                     <i style={{ color: '#999' }}>
                       <PhoneOutlined style={{ marginRight: 6 }} rotate={90} />
-                      {item.tel}
+                      {item?.tel}
                     </i>
                   </span>
                 </a>
