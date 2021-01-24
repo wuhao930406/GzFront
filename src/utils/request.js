@@ -87,7 +87,7 @@ request.interceptors.response.use(async (response, options) => {
   const data = await response.clone().json();
   // 详情返回的response处理
   if (data.code != 0 && response?.url.indexOf('code') == -1) {
-    Toast.fail(data.message);
+    Toast.fail(data.message,2,null,false);
   }
   return response;
 });

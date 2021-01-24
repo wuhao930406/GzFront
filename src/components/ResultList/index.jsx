@@ -127,16 +127,16 @@ class ResultList extends React.Component {
       />
     );
     const row = (rowData) => {
-      let poster = rowData.factory.factory_image.map((it) => it.preview_url);
+      let poster = rowData?.factory.factory_image.map((it) => it.preview_url);
       return (
         <div
-          key={rowData.id}
+          key={rowData?.id}
           style={{ padding: '0 12px' }}
           onClick={() => {
             history.push({
               pathname: '/detail',
               query: {
-                id: rowData.id,
+                id: rowData?.id,
               },
             });
           }}
@@ -168,10 +168,10 @@ class ResultList extends React.Component {
               }}
             >
               <div className="oneline" style={{ color: '#000', fontSize: 16 }}>
-                {rowData.name}
+                {rowData?.name}
               </div>
               <div className="oneline">
-                {rowData.keywords.map((it) => it.keyword_name).join(' / ')}
+                {rowData?.keywords.map((it) => it.keyword_name).join(' / ')}
               </div>
               <div>
                 <span
@@ -181,38 +181,50 @@ class ResultList extends React.Component {
                     fontWeight: 'bolder',
                   }}
                 >
-                  {rowData.min_month_salary + ' - ' + rowData.max_month_salary}
+                  {rowData?.min_month_salary + ' - ' + rowData?.max_month_salary}
                 </span>{' '}
                 元/月
               </div>
             </div>
-            <div
-              style={{
-                height: 64,
-                width: 64,
-                backgroundColor: '#f9f9f9',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <span
-                style={{ color: '#f76b1c', fontSize: 20, marginBottom: -4 }}
-              >
-                {rowData.hour_salary}
-              </span>
-              <span style={{ marginBottom: 4 }}>元/小时</span>
-            </div>
+            {
+              rowData?.job_type == "formal" ?
+                <div className="center"
+                  style={{
+                    height: 64,
+                    width: 64,
+                    backgroundColor: '#f9f9f9',
+                    color: '#f76b1c',
+                    fontSize: 16,
+                  }}>
+                  正式工
+                </div> : <div
+                  style={{
+                    height: 64,
+                    width: 64,
+                    backgroundColor: '#f9f9f9',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span
+                    style={{ color: '#f76b1c', fontSize: 20, marginBottom: -4 }}
+                  >
+                    {rowData?.hour_salary}
+                  </span>
+                  <span style={{ marginBottom: 4 }}>元/小时</span>
+                </div>
+            }
           </div>
         </div>
       );
     };
     let {
-        Header,
-        global: { istop },
-        dispatch,
-      } = this.props,
+      Header,
+      global: { istop },
+      dispatch,
+    } = this.props,
       {
         scrolltop,
         dataSource,

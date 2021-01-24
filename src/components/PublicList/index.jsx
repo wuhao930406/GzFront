@@ -87,11 +87,11 @@ class PublicList extends React.Component {
 
   render() {
     let {
-        Header,
-        global: { istop },
-        dispatch,
-        type,
-      } = this.props,
+      Header,
+      global: { istop },
+      dispatch,
+      type,
+    } = this.props,
       {
         scrolltop,
         dataSource,
@@ -112,10 +112,10 @@ class PublicList extends React.Component {
     );
     const row = (rowData) => {
       let poster = rowData?.factory?.factory_image
-        ? rowData.factory.factory_image.map((it) => it.preview_url)
+        ? rowData?.factory.factory_image.map((it) => it.preview_url)
         : [];
       return type == 'customer' ? (
-        <a key={rowData.id} className="kefuitem" href={`tel:${rowData.tel}`}>
+        <a key={rowData?.id} className="kefuitem" href={`tel:${rowData?.tel}`}>
           <div className="center">
             <Avatar
               size="large"
@@ -128,17 +128,17 @@ class PublicList extends React.Component {
               }}
               icon={<CustomerServiceOutlined style={{ fontSize: 16 }} />}
             ></Avatar>
-            <span style={{ fontSize: 16 }}>{rowData.name}</span>
+            <span style={{ fontSize: 16 }}>{rowData?.name}</span>
           </div>
           <span>
             <i style={{ color: '#999' }}>
               <PhoneOutlined style={{ marginRight: 6 }} rotate={90} />
-              {rowData.tel}
+              {rowData?.tel}
             </i>
           </span>
         </a>
       ) : type == 'store' ? (
-        <a key={rowData.id} className="kefuitem" href={`tel:${rowData.tel}`}>
+        <a key={rowData?.id} className="kefuitem" href={`tel:${rowData?.tel}`}>
           <div className="center">
             <Avatar
               size="large"
@@ -151,82 +151,100 @@ class PublicList extends React.Component {
               }}
               icon={<IconFont type="icon-dian" style={{ fontSize: 16 }} />}
             ></Avatar>
-            <span style={{ fontSize: 16 }}>{rowData.name}</span>
+            <span style={{ fontSize: 16 }}>{rowData?.name}</span>
           </div>
           <span>
             <i style={{ color: '#999' }}>
               <PhoneOutlined style={{ marginRight: 6 }} rotate={90} />
-              {rowData.tel}
+              {rowData?.tel}
             </i>
           </span>
         </a>
       ) : (
-        <List.Item
-          style={{ padding: 12 }}
-          onClick={() => {
-            history.push({
-              pathname: '/enrolldetail',
-              query: {
-                id: rowData.id,
-              },
-            });
-          }}
-        >
-          <List.Item.Meta
-            avatar={
-              <Badge
-                text={rowData.status_name}
-                corner
-                style={{
-                  backgroundColor:
-                    rowData.status == 'working'
-                      ? '#9cceff'
-                      : rowData.status == 'quit'
-                      ? 'grey'
-                      : 'green',
-                  fontSize: 12,
-                  right: -22,
-                }}
-              >
-                <Avatar src={poster[0]} shape="square" size={64} />
-              </Badge>
-            }
-            title={
-              <a style={{ fontSize: 16, color: '#000', display: 'flex' }}>
-                <span className="oneline" style={{ flex: 1, display: 'block' }}>
-                  {rowData.job?.name}
-                </span>
-                <b
-                  style={{
-                    color: '#f76b1c',
-                    fontSize: 15,
-                    fontWeight: 'bolder',
-                    paddingLeft: 12,
-                    fontSize: 18,
-                    display: 'block',
-                    width: '100px',
-                    textAlign: 'right',
-                  }}
-                >
-                  {rowData.job?.hour_salary}
-                  <span style={{ fontSize: 14 }}>元/小时</span>
-                </b>
-              </a>
-            }
-            description={
-              <div style={{ display: 'flex', paddingTop: 8 }}>
-                <span className="oneline" style={{ flex: 1 }}>
-                  工厂: {rowData.factory.name}
-                </span>
-                <span style={{ width: 120, textAlign: 'right' }}>
-                  {moment(rowData.created_at).format('YYYY-MM-DD HH:mm')}
-                </span>
-              </div>
-            }
-          />
-          <div></div>
-        </List.Item>
-      );
+            <List.Item
+              style={{ padding: 12 }}
+              onClick={() => {
+                history.push({
+                  pathname: '/enrolldetail',
+                  query: {
+                    id: rowData?.id,
+                  },
+                });
+              }}
+            >
+              <List.Item.Meta
+                avatar={
+                  <Badge
+                    text={rowData?.status_name}
+                    corner
+                    style={{
+                      backgroundColor:
+                        rowData?.status == 'working'
+                          ? '#9cceff'
+                          : rowData?.status == 'quit'
+                            ? 'grey'
+                            : 'green',
+                      fontSize: 12,
+                      right: -22,
+                    }}
+                  >
+                    <Avatar src={poster[0]} shape="square" size={64} />
+                  </Badge>
+                }
+                title={
+                  <a style={{ fontSize: 16, color: '#000', display: 'flex' }}>
+                    <span className="oneline" style={{ flex: 1, display: 'block' }}>
+                      {rowData?.job?.name}
+                    </span>
+                    {
+                      rowData?.job?.job_type == "formal" ?
+                        <b
+                          style={{
+                            color: '#f76b1c',
+                            fontSize: 15,
+                            fontWeight: 'bolder',
+                            paddingLeft: 12,
+                            fontSize: 18,
+                            display: 'block',
+                            width: '100px',
+                            textAlign: 'right',
+                          }}
+                        >
+                          <span style={{ fontSize: 14 }}>正式工</span>
+                        </b> :
+                        <b
+                          style={{
+                            color: '#f76b1c',
+                            fontSize: 15,
+                            fontWeight: 'bolder',
+                            paddingLeft: 12,
+                            fontSize: 18,
+                            display: 'block',
+                            width: '100px',
+                            textAlign: 'right',
+                          }}
+                        >
+                          {rowData?.job?.hour_salary}
+                          <span style={{ fontSize: 14 }}>元/小时</span>
+                        </b>
+                    }
+
+                  </a>
+                }
+                description={
+                  <div style={{ display: 'flex', paddingTop: 8 }}>
+                    <span className="oneline" style={{ flex: 1 }}>
+                      工厂: {rowData?.factory.name}
+                    </span>
+                    <span style={{ width: 120, textAlign: 'right' }}>
+                      {moment(rowData?.created_at).format('YYYY-MM-DD HH:mm')}
+                    </span>
+                  </div>
+                }
+              />
+              <div></div>
+            </List.Item>
+          );
     };
 
     return (

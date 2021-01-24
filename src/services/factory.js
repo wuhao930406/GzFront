@@ -106,7 +106,7 @@ export async function promo() {
 
 //获取排名名次
 export async function rank() {
-  return request('/api/wechat/user/rank');
+  return request('/api/wechat/user/recursion_rank');
 }
 
 //获取排名列表

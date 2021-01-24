@@ -154,16 +154,24 @@ let Detail = (props) => {
               元/月
             </span>
           </p>
-          <p>
-            时薪
+          {
+            data.job_type == "formal" ?<p>
+              类型
             <span style={{ color: '#f76b1c', paddingLeft: 12 }}>
-              <b style={{ fontSize: 22 }}>{data.hour_salary}</b> 元/小时
+              正式工
             </span>
-          </p>
+            </p>:<p>
+              时薪
+              <span style={{ color: '#f76b1c', paddingLeft: 12 }}>
+                <b style={{ fontSize: 22 }}>{data.hour_salary}</b> 元/小时
+              </span>
+            </p>
+          }
+          
           <p>
             分类
             <span style={{ color: '#333', paddingLeft: 12 }}>
-              {data.min_classify_name}
+              {data.max_classify_name+"/"+data.min_classify_name}
             </span>
           </p>
           <p>
@@ -219,13 +227,12 @@ let Detail = (props) => {
           <Auth
             className={styles.btn}
             style={{
-              backgroundColor: data.is_can_enroll
-                ? 'rgba(253, 159, 45,1)'
-                : '#999',
+              backgroundColor: (!data.is_can_enroll || data.status == 'close')
+                ? '#999':'rgba(253, 159, 45,1)',
             }}
           >
             <a
-              disabled={!data.is_can_enroll}
+              disabled={!data.is_can_enroll || data.status == 'close'}
               size="large"
               style={{ color: '#fff' }}
               onClick={() => {
@@ -244,7 +251,7 @@ let Detail = (props) => {
                 });
               }}
             >
-              {!data.is_can_enroll ? '您已报名' : '立即报名'}
+              {!data.is_can_enroll ? '您已报名' : data.status == 'close'?'该岗位已下架':'立即报名'}
             </a>
           </Auth>
         </div>

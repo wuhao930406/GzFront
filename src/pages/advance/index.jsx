@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Modal } from 'antd-mobile';
 import { Button, List, Avatar, Spin, Row, Col, Empty } from 'antd';
 import {
@@ -34,27 +34,37 @@ let Advance = (props) => {
       global: { userinfo },
     } = props;
 
+  console.log(userinfo.identity)
+
   let { data, loading } = useRequest(() => code()),
     promodata = useRequest(() => promo()),
-    memberdata = useRequest(() => member({ pageIndex: 1, promo_num: 'desc' })),
+    [memberlist, cmem] = useState([]),
     rankdata = useRequest(() => rank());
-  let promolist = [],
-    memberlist = [];
+  let promolist = [];
   promolist = useMemo(() => {
     if (promodata) {
       return promodata.data;
     } else {
       return [];
     }
-  }, [promodata]);
-  memberlist = useMemo(() => {
-    if (memberdata.data) {
-      return memberdata.data.list;
-    } else {
-      return [];
-    }
-  }, [memberdata]);
+  }, [promodata,type]);
 
+  useEffect(() => {
+    if(userinfo.identity !== "user" ){
+      member({ pageIndex: 1, recursion_promo_num: 'desc', identity: userinfo.identity }).then(res => {
+        cmem(res?.data ? res.data.list ? res.data.list : res.data.dataList : [])
+      })
+    }
+  }, [userinfo,type]);
+
+
+  let col = useMemo(() => {
+    if (userinfo.identity == "user") {
+      return 24
+    } else {
+      return 12
+    }
+  }, [userinfo.identity])
   return (
     <div>
       <Modal
@@ -142,37 +152,40 @@ let Advance = (props) => {
             {userinfo?.is_member === false ? (
               '未注册'
             ) : (
-              <QrcodeOutlined style={{ fontSize: 24 }} />
-            )}
+                <QrcodeOutlined style={{ fontSize: 24 }} />
+              )}
           </div>
         </div>
         <Row
-          className={[styles.bottombar, type == 2 ? styles.rightbottombar : '']}
+          className={userinfo.identity == "user" ?"":[styles.bottombar, type == 2 ? styles.rightbottombar : '']}
           style={{ backgroundColor: '#fff', margin: '0px 0px 4px 0px' }}
         >
-          <Col
-            onClick={() => {
-              ctype(1);
-            }}
-            className="center"
-            style={{
-              flexDirection: 'column',
-              padding: '10px 0',
-              transition: 'all 0.4s',
-            }}
-            span={12}
-          >
-            <div className="center" style={{ height: 36 }}>
-              <IconFont
-                type="icon-pm"
-                style={{ fontSize: 28, color: '#ff9c9c' }}
-              ></IconFont>
-            </div>
-            <span style={{ color: '#333', textAlign: 'center' }}>
-              我的排名{' '}
-              <b style={{ fontSize: 18, color: '#ff9c9c' }}>{rankdata?.data}</b>
-            </span>
-          </Col>
+          {
+            userinfo.identity == "user" ? null : <Col
+              onClick={() => {
+                ctype(1);
+              }}
+              className="center"
+              style={{
+                flexDirection: 'column',
+                padding: '10px 0',
+                transition: 'all 0.4s',
+              }}
+              span={col}
+            >
+              <div className="center" style={{ height: 36 }}>
+                <IconFont
+                  type="icon-pm"
+                  style={{ fontSize: 28, color: '#ff9c9c' }}
+                ></IconFont>
+              </div>
+              <span style={{ color: '#333', textAlign: 'center' }}>
+                我的排名{' '}
+                <b style={{ fontSize: 18, color: '#ff9c9c' }}>{rankdata?.data}</b>
+              </span>
+            </Col>
+          }
+
           <Col
             onClick={() => {
               ctype(2);
@@ -183,7 +196,7 @@ let Advance = (props) => {
               padding: '10px 0',
               transition: 'all 0.4s',
             }}
-            span={12}
+            span={col}
           >
             <div className="center" style={{ height: 36 }}>
               <IconFont
@@ -262,8 +275,8 @@ let Advance = (props) => {
                         人
                       </span>
                     ) : (
-                      ''
-                    )
+                        ''
+                      )
                   }
                 />
                 {type == 1 && (
@@ -288,14 +301,14 @@ let Advance = (props) => {
           />
         </div>
       ) : (
-        <Empty description="请注册会员后查看" style={{ padding: '60px 0' }}>
-          <Auth>
-            <Button type="primary" size="large">
-              立即注册
+          <Empty description="请注册会员后查看" style={{ padding: '60px 0' }}>
+            <Auth>
+              <Button type="primary" size="large">
+                立即注册
             </Button>
-          </Auth>
-        </Empty>
-      )}
+            </Auth>
+          </Empty>
+        )}
     </div>
   );
 };

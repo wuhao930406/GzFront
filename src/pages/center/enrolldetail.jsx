@@ -90,15 +90,28 @@ export default ({ scrolltop, location: { query } }) => {
             >
               月薪
             </Item>
-            <Item
-              extra={
-                <span style={{ color: 'rgb(247, 107, 28)' }}>
-                  <b style={{ fontSize: 18 }}>{item?.job?.hour_salary} </b>元
-                </span>
-              }
-            >
-              时薪
-            </Item>
+            {
+              item?.job?.job_type == "formal" ?
+                <Item
+                  extra={
+                    <span style={{ color: 'rgb(247, 107, 28)' }}>
+                      正式工
+                  </span>
+                  }
+                >
+                  类型
+                </Item> :
+                <Item
+                  extra={
+                    <span style={{ color: 'rgb(247, 107, 28)' }}>
+                      <b style={{ fontSize: 18 }}>{item?.job?.hour_salary} </b>元/小时
+                    </span>
+                      }
+                    >
+                      时薪
+                </Item>
+            }
+
             <Item extra={item?.job?.subsidy}>补贴</Item>
             <Item
               multipleLine
